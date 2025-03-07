@@ -15,7 +15,11 @@ export const registerUser = async (userData: FieldValues) => {
         body: JSON.stringify({ user: userData }),
       }
     );
-    return res.json();
+    const result = await res.json();
+    if (result.success) {
+      (await cookies()).set("accessToken", result.data.accessToken);
+      return result;
+    }
   } catch (error: any) {
     return Error(error);
   }
@@ -50,5 +54,23 @@ export const getCurrentUser = async () => {
     return decodedData;
   } else {
     return null;
+  }
+};
+
+export const reCaptchaTokenVerification = async (token: string) => {
+  try {
+    const res = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www.form.urlencoded",
+      },
+      body: new URLSearchParams({
+        secret: process.env.NEXT_PUBLIC_RECAPTCHA_SERVER_KEY!,
+        response: token,
+      }),
+    });
+    return res.json();
+  } catch (error: any) {
+    return Error(error);
   }
 };
