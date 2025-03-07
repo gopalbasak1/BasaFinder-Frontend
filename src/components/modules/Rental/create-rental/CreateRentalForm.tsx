@@ -17,18 +17,138 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Districts, Divisions } from "@/constants/address";
+import { useUser } from "@/context/UserContext";
+import { addRentalListing, uploadImageToCloudinary } from "@/services/Rental";
 import { Plus } from "lucide-react";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import React from "react";
+
+import {
+  FieldValues,
+  SubmitHandler,
+  useFieldArray,
+  useForm,
+} from "react-hook-form";
+import { toast } from "sonner";
 
 const CreateRentalForm = () => {
-  const form = useForm();
+  const { user, isLoading } = useUser();
+  console.log(user);
+  const form = useForm({
+    defaultValues: {
+      holding: "",
+      description: "",
+      rentAmount: "",
+      category: "",
+      unitNumber: "",
+      division: "",
+      district: "",
+      upazila: "",
+      postalCode: "",
+      citycorporation: "",
+      bedrooms: "",
+      image: "",
+      availableFrom: "",
+      keyFeatures: [{ value: "" }],
+      specification: [{ key: "", value: "" }],
+    },
+  });
+  //   const { user } = useUser();
+  //   console.log(user);
 
   const {
     formState: { isSubmitting },
   } = form;
 
-  const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    console.log(data);
+  const [districts, setDistricts] = React.useState<string[]>([]);
+  const [selectedDivision, setSelectedDivision] = React.useState<string>("");
+
+  const handleDivisionChange = (division: string) => {
+    setSelectedDivision(division);
+    setDistricts(Districts[division] || []); // Update districts based on the division
+  };
+
+  if (isLoading) return <p>Loading...</p>;
+  if (!user) return <p>User not found. Please log in.</p>;
+
+  const { append: appendFeatures, fields: featureFields } = useFieldArray({
+    control: form.control,
+    name: "keyFeatures",
+  });
+
+  const addFeatures = () => {
+    appendFeatures({ value: "" });
+  };
+  const { append: appendSpec, fields: specFields } = useFieldArray({
+    control: form.control,
+    name: "specification",
+  });
+
+  const addSpec = () => {
+    appendSpec({ key: "", value: "" });
+  };
+
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    const keyFeatures = data.keyFeatures.map(
+      (feature: { value: string }) => feature.value
+    );
+
+    const specification: { [key: string]: string } = {};
+    data.specification.forEach(
+      (item: { key: string; value: string }) =>
+        (specification[item.key] = item.value)
+    );
+
+    const modifiedData = {
+      ...data,
+      landlordId: user?.userId,
+
+      availableFrom: data.availableFrom
+        ? new Date(data.availableFrom).toISOString().split("T")[0]
+        : null, // Handle invalid dates gracefully
+      // Ensure date format
+      bedrooms: Number(data.bedrooms) || 1,
+
+      keyFeatures,
+      postalCode: Number(data.postalCode) || 0, // Convert to number
+      rentAmount: Number(data.rentAmount) || 0, // Convert to number
+      specification,
+    };
+    console.log("User Data:", user);
+    console.log("Extracted Landlord ID:", user?.userId);
+    console.log("Submitting Data:", modifiedData);
+
+    if (!modifiedData.landlordId) {
+      console.error("❌ Missing landlord ID in frontend request!");
+      toast.error("Landlord ID is missing. Please log in again.");
+      return;
+    }
+
+    try {
+      const response = await addRentalListing(JSON.stringify(modifiedData));
+      console.log("API Response:", response);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+
+    console.log("Submitting Data:", modifiedData);
+
+    try {
+      const response = await addRentalListing(JSON.stringify(modifiedData));
+      console.log("Submitting Data:", modifiedData);
+
+      console.log(response);
+      if (response?.success) {
+        toast.success("Rental listing added successfully!");
+        form.reset(); // Clear form after success
+      } else {
+        console.log(response.message);
+        toast.error(response.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong. Please try again.");
+    }
   };
 
   return (
@@ -79,27 +199,30 @@ const CreateRentalForm = () => {
                 <FormItem>
                   <FormLabel>Division</FormLabel>
                   <Select
-                    onValueChange={field.onChange}
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      handleDivisionChange(value); // Update districts when division changes
+                    }}
                     defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select Product Category" />
+                        <SelectValue placeholder="Select Division" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {/* {categories.map((category) => (
-                        <SelectItem key={category?._id} value={category?._id}>
-                          {category?.name}
+                      {Divisions.map((division) => (
+                        <SelectItem key={division} value={division}>
+                          {division}
                         </SelectItem>
-                      ))} */}
+                      ))}
                     </SelectContent>
                   </Select>
-
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="district"
@@ -109,25 +232,32 @@ const CreateRentalForm = () => {
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
+                    disabled={!districts.length} // Disable if no districts are available
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select Product Brand" />
+                        <SelectValue placeholder="Select District" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {/* {brands.map((brand) => (
-                        <SelectItem key={brand?._id} value={brand?._id}>
-                          {brand?.name}
+                      {districts.length ? (
+                        districts.map((district) => (
+                          <SelectItem key={district} value={district}>
+                            {district}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="no-district" disabled>
+                          No districts available
                         </SelectItem>
-                      ))} */}
+                      )}
                     </SelectContent>
                   </Select>
-
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="address"
@@ -202,7 +332,17 @@ const CreateRentalForm = () => {
                 <FormItem>
                   <FormLabel>Category</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value || ""} />
+                    <select
+                      {...field}
+                      value={field.value || ""}
+                      className="input-class"
+                    >
+                      {" "}
+                      {/* Add your input class if needed */}
+                      <option value="">Select Category</option>
+                      <option value="family">Family</option>
+                      <option value="bachelor">Bachelor</option>
+                    </select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -230,7 +370,7 @@ const CreateRentalForm = () => {
                 <FormItem>
                   <FormLabel>Available From</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value || ""} />
+                    <Input type="date" {...field} value={field.value || ""} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -259,44 +399,37 @@ const CreateRentalForm = () => {
           </div>
 
           <div>
-            <div className="flex justify-between items-center border-t border-b py-3 my-5">
-              <p className="text-primary font-bold text-xl">Images</p>
-            </div>
-            <div className="flex gap-4 ">
-              {/* <NMImageUploader
-                setImageFiles={setImageFiles}
-                setImagePreview={setImagePreview}
-                label="Upload Image"
-                className="w-fit mt-0"
-              />
-              <ImagePreviewer
-                className="flex flex-wrap gap-4"
-                setImageFiles={setImageFiles}
-                imagePreview={imagePreview}
-                setImagePreview={setImagePreview}
-              /> */}
-            </div>
-          </div>
-
-          <div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {/* {colorFields.map((colorField, index) => (
-                <div key={colorField.id}>
-                  <FormField
-                    control={form.control}
-                    name={`availableColors.${index}.value`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Color {index + 1}</FormLabel>
-                        <FormControl>
-                          <Input {...field} value={field.value || ""} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              ))} */}
+            <div>
+              <div className="flex justify-between items-center border-t border-b py-3 my-5">
+                <p className="text-primary font-bold text-xl">Images</p>
+              </div>
+              <div className="flex gap-4 ">
+                <FormField
+                  control={form.control}
+                  name="image"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Image</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const imageUrl = await uploadImageToCloudinary(
+                                file
+                              );
+                              field.onChange(imageUrl);
+                            }
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
           </div>
 
@@ -304,7 +437,7 @@ const CreateRentalForm = () => {
             <div className="flex justify-between items-center border-t border-b py-3 my-5">
               <p className="text-primary font-bold text-xl">Key Features</p>
               <Button
-                //onClick={addFeatures}
+                onClick={addFeatures}
                 variant="outline"
                 className="size-10"
                 type="button"
@@ -314,7 +447,7 @@ const CreateRentalForm = () => {
             </div>
 
             <div className="my-5">
-              {/* {featureFields.map((featureField, index) => (
+              {featureFields.map((featureField, index) => (
                 <div key={featureField.id}>
                   <FormField
                     control={form.control}
@@ -330,7 +463,7 @@ const CreateRentalForm = () => {
                     )}
                   />
                 </div>
-              ))} */}
+              ))}
             </div>
           </div>
 
@@ -338,7 +471,7 @@ const CreateRentalForm = () => {
             <div className="flex justify-between items-center border-t border-b py-3 my-5">
               <p className="text-primary font-bold text-xl">Specification</p>
               <Button
-                //onClick={addSpec}
+                onClick={addSpec}
                 variant="outline"
                 className="size-10"
                 type="button"
@@ -347,7 +480,7 @@ const CreateRentalForm = () => {
               </Button>
             </div>
 
-            {/* {specFields.map((specField, index) => (
+            {specFields.map((specField, index) => (
               <div
                 key={specField.id}
                 className="grid grid-cols-1 gap-4 md:grid-cols-2 my-5"
@@ -379,7 +512,7 @@ const CreateRentalForm = () => {
                   )}
                 />
               </div>
-            ))} */}
+            ))}
           </div>
 
           <Button type="submit" className="mt-5 w-full" disabled={isSubmitting}>
