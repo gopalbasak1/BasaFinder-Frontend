@@ -58,7 +58,7 @@ const LoginForm = () => {
 
       if (res.success) {
         toast.success(res?.message);
-        // router.push("/"); // Redirect to dashboard after successful login
+        router.push("/");
       } else {
         toast.error(res?.message);
       }
@@ -103,7 +103,7 @@ const LoginForm = () => {
 
           <div className="flex mt-3 w-full">
             <ReCAPTCHA
-              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_CLIENT_KEY}
+              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_CLIENT_KEY || ""}
               onChange={handleReCaptcha}
               className="mx-auto"
             />
@@ -114,7 +114,7 @@ const LoginForm = () => {
             type="submit"
             className="w-full"
           >
-            {isSubmitting ? "Logging in..." : "Login"}
+            {isSubmitting ? "Logging..." : "Login"}
           </Button>
         </form>
       </Form>

@@ -1,9 +1,29 @@
+"use client";
 import Image from "next/image";
 import { Button } from "../ui/button";
-import { Heart, ShoppingBag } from "lucide-react";
+import { Heart, LogOut, ShoppingBag } from "lucide-react";
 import logo from "../../assests/Basa.svg";
+import Link from "next/link";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { logout } from "@/services/AuthService";
+import { useUser } from "@/context/UserContext";
 
 export default function Navbar() {
+  const { user, setIsLoading } = useUser();
+
+  const handleLogOut = () => {
+    logout();
+    setIsLoading(true);
+  };
+
   return (
     <header className="border-b w-full mt-2">
       <div className="container flex justify-between items-center mx-auto h-16 px-3 py-2">
@@ -32,6 +52,44 @@ export default function Navbar() {
           <Button variant="outline" className="rounded-full p-0 size-10">
             <ShoppingBag />
           </Button>
+          {user ? (
+            <>
+              <Link href="/landlord/rental/create-rental">
+                <Button className="bg-purple-700 rounded-full">
+                  Create Rental Listing
+                </Button>
+              </Link>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                  <Avatar>
+                    <AvatarImage src="https://github.com/shadcn.png" />
+                    <AvatarFallback>User</AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>Profile</DropdownMenuItem>
+                  <DropdownMenuItem>Dashboard</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="bg-red-500 cursor-pointer"
+                    onClick={handleLogOut}
+                  >
+                    <LogOut />
+                    <span>Log Out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          ) : (
+            <Link href="/login">
+              <Button className="rounded-full" variant="outline">
+                Login
+              </Button>
+            </Link>
+          )}
         </nav>
       </div>
     </header>
