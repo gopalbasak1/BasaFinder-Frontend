@@ -1,25 +1,29 @@
 import Image from "next/image";
+import React from "react";
 import { Button } from "../../button";
 import { X } from "lucide-react";
 
 type TImagePreviewer = {
-  imagePreview: string[];
+  setImageFiles: React.Dispatch<React.SetStateAction<File[]>>;
+  imagePreview: string[]; // Cloudinary URLs
   setImagePreview: React.Dispatch<React.SetStateAction<string[]>>;
   className?: string;
 };
 
 const ImagePreviewer = ({
+  setImageFiles,
   imagePreview,
   setImagePreview,
   className,
 }: TImagePreviewer) => {
   const handleRemove = (index: number) => {
+    setImageFiles((prev) => prev.filter((_, idx) => idx !== index));
     setImagePreview((prev) => prev.filter((_, idx) => idx !== index));
   };
 
   return (
     <div className={className}>
-      {imagePreview.map((preview, index) => (
+      {imagePreview?.map((preview, index) => (
         <div
           key={index}
           className="relative w-36 h-36 rounded-md overflow-hidden border border-dashed border-gray-300"

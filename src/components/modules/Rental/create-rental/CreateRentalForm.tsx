@@ -1,5 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import BFImageUploader from "@/components/ui/core/BFImageUploader";
+import ImagePreviewer from "@/components/ui/core/BFImageUploader/ImagePreviewer";
 import {
   Form,
   FormControl,
@@ -17,11 +19,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Districts, Divisions } from "@/constants/address";
+import { Districts, Divisions, DivisionType } from "@/constants/address";
 import { useUser } from "@/context/UserContext";
-import { addRentalListing, uploadImageToCloudinary } from "@/services/Rental";
+import { addRentalListing } from "@/services/Rental";
+import { RentalFormData } from "@/types";
 import { Plus } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 
 import {
   FieldValues,
@@ -33,8 +36,10 @@ import { toast } from "sonner";
 
 const CreateRentalForm = () => {
   const { user, isLoading } = useUser();
-  console.log(user);
-  const form = useForm({
+  const [imageFiles, setImageFiles] = useState<File[] | []>([]);
+  const [imagePreview, setImagePreview] = useState<string[] | []>([]);
+
+  const form = useForm<RentalFormData>({
     defaultValues: {
       holding: "",
       description: "",
@@ -47,7 +52,7 @@ const CreateRentalForm = () => {
       postalCode: "",
       citycorporation: "",
       bedrooms: "",
-      image: "",
+      address: "",
       availableFrom: "",
       keyFeatures: [{ value: "" }],
       specification: [{ key: "", value: "" }],
@@ -65,11 +70,8 @@ const CreateRentalForm = () => {
 
   const handleDivisionChange = (division: string) => {
     setSelectedDivision(division);
-    setDistricts(Districts[division] || []); // Update districts based on the division
+    setDistricts(Districts[division as DivisionType] || []); // Update districts based on the division
   };
-
-  if (isLoading) return <p>Loading...</p>;
-  if (!user) return <p>User not found. Please log in.</p>;
 
   const { append: appendFeatures, fields: featureFields } = useFieldArray({
     control: form.control,
@@ -88,6 +90,9 @@ const CreateRentalForm = () => {
     appendSpec({ key: "", value: "" });
   };
 
+  if (isLoading) return <p>Loading...</p>;
+  if (!user) return <p>User not found. Please log in.</p>;
+
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     const keyFeatures = data.keyFeatures.map(
       (feature: { value: string }) => feature.value
@@ -101,8 +106,8 @@ const CreateRentalForm = () => {
 
     const modifiedData = {
       ...data,
-      landlordId: user?.userId,
-
+      //landlordId: user?.userId,
+      imageUrls: imagePreview,
       availableFrom: data.availableFrom
         ? new Date(data.availableFrom).toISOString().split("T")[0]
         : null, // Handle invalid dates gracefully
@@ -114,35 +119,19 @@ const CreateRentalForm = () => {
       rentAmount: Number(data.rentAmount) || 0, // Convert to number
       specification,
     };
-    console.log("User Data:", user);
-    console.log("Extracted Landlord ID:", user?.userId);
-    console.log("Submitting Data:", modifiedData);
 
-    if (!modifiedData.landlordId) {
-      console.error("❌ Missing landlord ID in frontend request!");
-      toast.error("Landlord ID is missing. Please log in again.");
-      return;
-    }
-
-    try {
-      const response = await addRentalListing(JSON.stringify(modifiedData));
-      console.log("API Response:", response);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-
-    console.log("Submitting Data:", modifiedData);
+    console.log("Submitting Data before:", modifiedData);
 
     try {
       const response = await addRentalListing(JSON.stringify(modifiedData));
       console.log("Submitting Data:", modifiedData);
 
-      console.log(response);
+      console.log("Submitting Data after:", response);
       if (response?.success) {
         toast.success("Rental listing added successfully!");
         form.reset(); // Clear form after success
       } else {
-        console.log(response.message);
+        console.log("Submitting Data after:", response.message);
         toast.error(response.message);
       }
     } catch (error) {
@@ -399,37 +388,22 @@ const CreateRentalForm = () => {
           </div>
 
           <div>
-            <div>
-              <div className="flex justify-between items-center border-t border-b py-3 my-5">
-                <p className="text-primary font-bold text-xl">Images</p>
-              </div>
-              <div className="flex gap-4 ">
-                <FormField
-                  control={form.control}
-                  name="image"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Image</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="file"
-                          accept="image/*"
-                          onChange={async (e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              const imageUrl = await uploadImageToCloudinary(
-                                file
-                              );
-                              field.onChange(imageUrl);
-                            }
-                          }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+            <div className="flex justify-between items-center border-t border-b py-3 my-5">
+              <p className="text-primary font-bold text-xl">Images</p>
+            </div>
+            <div className="flex gap-4 ">
+              <BFImageUploader
+                setImageFiles={setImageFiles}
+                setImagePreview={setImagePreview}
+                label="Upload Image"
+                className="w-fit mt-0"
+              />
+              <ImagePreviewer
+                className="flex flex-wrap gap-4"
+                setImageFiles={setImageFiles}
+                imagePreview={imagePreview}
+                setImagePreview={setImagePreview}
+              />
             </div>
           </div>
 

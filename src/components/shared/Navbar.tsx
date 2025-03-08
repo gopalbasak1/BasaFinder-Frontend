@@ -15,13 +15,20 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { logout } from "@/services/AuthService";
 import { useUser } from "@/context/UserContext";
+import { usePathname, useRouter } from "next/navigation";
+import { protectedRoutes } from "@/contants";
 
 export default function Navbar() {
   const { user, setIsLoading } = useUser();
+  const pathname = usePathname();
+  const router = useRouter();
 
   const handleLogOut = () => {
     logout();
     setIsLoading(true);
+    if (protectedRoutes.some((route) => pathname.match(route))) {
+      router.push("/");
+    }
   };
 
   return (
@@ -61,7 +68,7 @@ export default function Navbar() {
               </Link>
 
               <DropdownMenu>
-                <DropdownMenuTrigger>
+                <DropdownMenuTrigger className="cursor-pointer">
                   <Avatar>
                     <AvatarImage src="https://github.com/shadcn.png" />
                     <AvatarFallback>User</AvatarFallback>
@@ -71,7 +78,9 @@ export default function Navbar() {
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>Profile</DropdownMenuItem>
-                  <DropdownMenuItem>Dashboard</DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link href={`/${user?.role}/dashboard`}>Dashboard</Link>
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     className="bg-red-500 cursor-pointer"

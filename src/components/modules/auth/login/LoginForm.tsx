@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
@@ -27,11 +27,13 @@ const LoginForm = () => {
   });
   const [reCaptchaStatus, setRecaptchaStatus] = useState(false);
 
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+  const redirect = searchParams.get("redirectPath");
   const {
     formState: { isSubmitting },
   } = form;
-
-  const router = useRouter();
 
   const handleReCaptcha = async (value: string | null) => {
     try {
@@ -58,7 +60,11 @@ const LoginForm = () => {
 
       if (res.success) {
         toast.success(res?.message);
-        router.push("/");
+        if (redirect) {
+          router.push(redirect);
+        } else {
+          router.push("/profile");
+        }
       } else {
         toast.error(res?.message);
       }

@@ -7,9 +7,9 @@ export const Divisions = [
   "Khulna",
   "Barishal",
   "Sylhet",
-];
-
-export const Districts = {
+] as const;
+export type DivisionType = (typeof Divisions)[number];
+export const Districts: Record<DivisionType, string[]> = {
   Dhaka: [
     "Dhaka",
     "Faridpur",
@@ -76,7 +76,7 @@ export const Districts = {
     "Barguna",
     "Barishal",
     "Bhola",
-    "Jhalokathi",
+    "Jhalakathi",
     "Patuakhali",
     "Pirojpur",
   ],
