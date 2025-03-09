@@ -15,5 +15,5 @@ export type RentalFormData = {
   description: string;
   keyFeatures: { value: string }[];
   specification: { key: string; value: string }[];
-  imageUrls: string[]; // ✅ Ensure images are stored as an array
+  imageUrls: string; // ✅ Ensure images are stored as an array
 };

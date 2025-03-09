@@ -10,10 +10,10 @@ import { BFTable } from "@/components/ui/core/BFTable";
 import TablePagination from "@/components/ui/core/BFTable/TablePagination";
 import { useState } from "react";
 import { toast } from "sonner";
-import { deleteRentalByLandlord } from "@/services/Rental";
+import { deleteRentalByAdmin, deleteRentalByLandlord } from "@/services/Rental";
 import DeleteConfirmationModal from "@/components/ui/core/BFModel/DeleteConfirmationModal";
 
-const ManageRental = ({
+const ManageAdminRental = ({
   rentals,
   meta,
 }: {
@@ -37,7 +37,7 @@ const ManageRental = ({
   const handleDeleteConfirm = async () => {
     try {
       if (selectedIds) {
-        const res = await deleteRentalByLandlord(selectedIds[0]);
+        const res = await deleteRentalByAdmin(selectedIds[0]);
         console.log(res);
         if (res.success) {
           toast.success(res.message);
@@ -135,7 +135,7 @@ const ManageRental = ({
             className="text-gray-500 hover:text-green-500"
             title="Edit"
             onClick={() =>
-              router.push(`/landlord/rental/update-rental/${row.original._id}`)
+              router.push(`/admin/rental/update-rental/${row.original._id}`)
             }
           >
             <Edit className="w-5 h-5" />
@@ -178,4 +178,4 @@ const ManageRental = ({
   );
 };
 
-export default ManageRental;
+export default ManageAdminRental;

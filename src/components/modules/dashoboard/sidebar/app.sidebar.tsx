@@ -25,6 +25,8 @@ import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
 import Link from "next/link";
 import { useUser } from "@/context/UserContext"; // ✅ Import hook but DON'T use it here
+import Image from "next/image";
+import logo from "../../../../assests/Basa.svg";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useUser(); // ✅ Hook is now inside the component
@@ -33,24 +35,48 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     navMain: [
       {
         title: "Dashboard",
-        url: `/${user?.role || "user"}/dashboard`,
+        url: `/${user?.role}/dashboard`,
         icon: SquareTerminal,
         isActive: true,
       },
-      {
-        title: "Rental",
-        url: `/${user?.role || "landlord"}/rental/manage-rental`,
-        icon: Bot,
-        items: [
-          {
-            title: "Manage Rental",
-            url: `/${user?.role || "landlord"}/rental/manage-rental`,
-          },
-          { title: "Manage Categories", url: "/user/shop/category" },
-          { title: "Manage Brands", url: "/user/shop/brand" },
-          { title: "Manage Coupon", url: "/user/shop/manage-coupon" },
-        ],
-      },
+      // Conditionally include the Rental section based on the user's role
+      ...(user?.role === "landlord"
+        ? [
+            {
+              title: "Rental",
+              url: `/landlord/rental/manage-rental`,
+              icon: Bot,
+              items: [
+                {
+                  title: "Manage Rental",
+                  url: `/landlord/rental/manage-rental`,
+                },
+                { title: "Manage Categories", url: "/user/shop/category" },
+                { title: "Manage Brands", url: "/user/shop/brand" },
+                { title: "Manage Coupon", url: "/user/shop/manage-coupon" },
+              ],
+            },
+          ]
+        : []),
+      // Conditionally include the Rental section based on the user's role
+      ...(user?.role === "admin"
+        ? [
+            {
+              title: "Rental",
+              url: `/admin/rental/manage-rental`,
+              icon: Bot,
+              items: [
+                {
+                  title: "Manage Rental",
+                  url: `/admin/rental/manage-rental`,
+                },
+                { title: "Manage Categories", url: "/user/shop/category" },
+                { title: "Manage Brands", url: "/user/shop/brand" },
+                { title: "Manage Coupon", url: "/user/shop/manage-coupon" },
+              ],
+            },
+          ]
+        : []),
       {
         title: "Settings",
         url: "#",
@@ -78,9 +104,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <Link href="/">
                 <div className="flex items-center justify-center">
                   {/* <Logo /> */}
+                  <Image
+                    className="w-[100px]"
+                    src={logo}
+                    alt="logo"
+                    width={100}
+                    height={100}
+                  />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <h2 className="font-bold text-xl">NextMart</h2>
+                  <h2 className="font-bold text-xl">Basa Finder</h2>
                 </div>
               </Link>
             </SidebarMenuButton>
