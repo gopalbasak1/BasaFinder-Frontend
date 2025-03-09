@@ -1,0 +1,7 @@
+.banner {
+  background: url("../../../../assests/banner1.jpg");
+  height: 500px;
+  block-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}

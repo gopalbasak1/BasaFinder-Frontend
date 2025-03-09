@@ -61,27 +61,27 @@ export default function Navbar() {
           </Button>
           {user ? (
             <>
-              <Link href="/landlord/rental/create-rental">
-                <Button className="bg-purple-700 rounded-full">
-                  Create Rental Listing
-                </Button>
-              </Link>
-
               <DropdownMenu>
                 <DropdownMenuTrigger className="cursor-pointer">
                   <Avatar>
-                    <AvatarImage src="https://github.com/shadcn.png" />
-                    <AvatarFallback>User</AvatarFallback>
+                    <AvatarImage src={user?.imageUrls} />
+                    <AvatarFallback>{user?.name}</AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>Profile</DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link href={`/${user?.role}/settings/profile`}>
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+
                   <DropdownMenuItem>
                     <Link href={`/${user?.role}/dashboard`}>Dashboard</Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
+
                   <DropdownMenuItem
                     className="bg-red-500 cursor-pointer"
                     onClick={handleLogOut}

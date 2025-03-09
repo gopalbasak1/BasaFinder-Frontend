@@ -24,6 +24,7 @@ import { useUser } from "@/context/UserContext";
 import { addRentalListing } from "@/services/Rental";
 import { RentalFormData } from "@/types";
 import { Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 import {
@@ -38,6 +39,7 @@ const CreateRentalForm = () => {
   const { user, isLoading } = useUser();
   const [imageFiles, setImageFiles] = useState<File[] | []>([]);
   const [imagePreview, setImagePreview] = useState<string[] | []>([]);
+  const router = useRouter();
 
   const form = useForm<RentalFormData>({
     defaultValues: {
@@ -129,6 +131,7 @@ const CreateRentalForm = () => {
       console.log("Submitting Data after:", response);
       if (response?.success) {
         toast.success("Rental listing added successfully!");
+        router.push("/landlord/rental/manage-rental");
         form.reset(); // Clear form after success
       } else {
         console.log("Submitting Data after:", response.message);
@@ -408,7 +411,7 @@ const CreateRentalForm = () => {
           </div>
 
           <div>
-            <div className="flex justify-between items-center border-t border-b py-3 my-5">
+            <div className="flex justify-between items-center border-t border-b py-3 my-6">
               <p className="text-primary font-bold text-xl">Key Features</p>
               <Button
                 onClick={addFeatures}
@@ -422,7 +425,7 @@ const CreateRentalForm = () => {
 
             <div className="my-5">
               {featureFields.map((featureField, index) => (
-                <div key={featureField.id}>
+                <div className="my-3" key={featureField.id}>
                   <FormField
                     control={form.control}
                     name={`keyFeatures.${index}.value`}

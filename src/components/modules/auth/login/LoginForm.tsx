@@ -35,16 +35,16 @@ const LoginForm = () => {
     formState: { isSubmitting },
   } = form;
 
-  const handleReCaptcha = async (value: string | null) => {
-    try {
-      const res = await reCaptchaTokenVerification(value!);
-      if (res?.success) {
-        setRecaptchaStatus(true);
-      }
-    } catch (error: any) {
-      console.error(error);
-    }
-  };
+  // const handleReCaptcha = async (value: string | null) => {
+  //   try {
+  //     const res = await reCaptchaTokenVerification(value!);
+  //     if (res?.success) {
+  //       setRecaptchaStatus(true);
+  //     }
+  //   } catch (error: any) {
+  //     console.error(error);
+  //   }
+  // };
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     try {
@@ -60,10 +60,13 @@ const LoginForm = () => {
 
       if (res.success) {
         toast.success(res?.message);
+        const userRole = res?.data?.role;
         if (redirect) {
           router.push(redirect);
+        } else if (userRole) {
+          router.push(`/${userRole}/settings/profile`);
         } else {
-          router.push("/settings/profile");
+          router.push("/");
         }
       } else {
         toast.error(res?.message);
@@ -107,16 +110,16 @@ const LoginForm = () => {
             )}
           />
 
-          <div className="flex mt-3 w-full">
+          {/* <div className="flex mt-3 w-full">
             <ReCAPTCHA
               sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_CLIENT_KEY || ""}
               onChange={handleReCaptcha}
               className="mx-auto"
             />
-          </div>
+          </div> */}
 
           <Button
-            disabled={reCaptchaStatus ? false : true}
+            // disabled={reCaptchaStatus ? false : true}
             type="submit"
             className="w-full"
           >

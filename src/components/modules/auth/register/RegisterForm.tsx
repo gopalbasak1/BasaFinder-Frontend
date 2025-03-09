@@ -24,8 +24,10 @@ import ImagePreviewer from "@/components/ui/core/BFImageUploader/ImagePreviewer"
 import BFImageUploader from "@/components/ui/core/BFImageUploader";
 import { useState } from "react";
 import { BiBlock, BiRun } from "react-icons/bi";
+import { useUser } from "@/context/UserContext";
 
 const RegisterForm = () => {
+  const { user } = useUser();
   const [imageFiles, setImageFiles] = useState<File[] | []>([]);
   const [imagePreview, setImagePreview] = useState<string[] | []>([]);
   const form = useForm({
@@ -62,7 +64,7 @@ const RegisterForm = () => {
         if (redirect) {
           router.push(redirect);
         } else {
-          router.push("/settings/profile");
+          router.push("/");
         }
       } else {
         toast.error(res?.message);

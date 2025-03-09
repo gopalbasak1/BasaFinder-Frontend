@@ -51,9 +51,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   title: "Manage Rental",
                   url: `/landlord/rental/manage-rental`,
                 },
-                { title: "Manage Categories", url: "/user/shop/category" },
-                { title: "Manage Brands", url: "/user/shop/brand" },
-                { title: "Manage Coupon", url: "/user/shop/manage-coupon" },
               ],
             },
           ]
@@ -70,9 +67,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   title: "Manage Rental",
                   url: `/admin/rental/manage-rental`,
                 },
-                { title: "Manage Categories", url: "/user/shop/category" },
-                { title: "Manage Brands", url: "/user/shop/brand" },
-                { title: "Manage Coupon", url: "/user/shop/manage-coupon" },
               ],
             },
             {
@@ -91,11 +85,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         : []),
       {
         title: "Settings",
-        url: `/settings/profile`,
+        url: `/${user?.role}/settings/profile`,
         icon: Settings,
         items: [
-          { title: "Profile", url: `/settings/profile` },
-          { title: "Manage Password", url: `/settings/password` },
+          { title: "Profile", url: `/${user?.role}/settings/profile` },
+          { title: "Manage Password", url: `/${user?.role}/settings/password` },
         ],
       },
     ],

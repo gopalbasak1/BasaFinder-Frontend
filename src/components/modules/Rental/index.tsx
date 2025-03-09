@@ -158,7 +158,7 @@ const ManageRental = ({
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold">Manage Rental Listings</h1>
         <Button
-          onClick={() => router.push("/user/shop/products/add-product")}
+          onClick={() => router.push("/landlord/rental/create-rental")}
           size="sm"
         >
           Add Rental <Plus />
