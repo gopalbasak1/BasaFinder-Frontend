@@ -7,4 +7,6 @@ export const protectedRoutes = [
   "/landlord/:page",
   "/tenant",
   "/tenant/:page",
+  "/settings/profile",
+  "/settings/password",
 ];

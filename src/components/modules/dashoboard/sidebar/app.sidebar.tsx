@@ -85,17 +85,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   url: `/admin/user/manage-users`,
                 },
                 { title: "Manage Role", url: "/admin/user/update-role" },
-                { title: "Manage Brands", url: "/user/shop/brand" },
-                { title: "Manage Coupon", url: "/user/shop/manage-coupon" },
               ],
             },
           ]
         : []),
       {
         title: "Settings",
-        url: "#",
+        url: `/settings/profile`,
         icon: Settings,
-        items: [{ title: "Profile", url: "/profile" }],
+        items: [
+          { title: "Profile", url: `/settings/profile` },
+          { title: "Manage Password", url: `/settings/password` },
+        ],
       },
     ],
     navSecondary: [
