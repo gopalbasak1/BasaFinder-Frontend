@@ -12,7 +12,7 @@ export const registrationSchema = z.object({
   image: z.string().optional(),
   password: z
     .string({ required_error: "Password is required" })
-    .min(8, "Password must be at least 8 characters"),
+    .min(6, "Password must be at least 6 characters"),
   passwordConfirm: z
     .string({ required_error: "Password Confirmation is required" })
     .min(1),

@@ -75,6 +75,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 { title: "Manage Coupon", url: "/user/shop/manage-coupon" },
               ],
             },
+            {
+              title: "User",
+              url: `/admin/user/manage-users`,
+              icon: Bot,
+              items: [
+                {
+                  title: "Manage Users",
+                  url: `/admin/user/manage-users`,
+                },
+                { title: "Manage Role", url: "/admin/user/update-role" },
+                { title: "Manage Brands", url: "/user/shop/brand" },
+                { title: "Manage Coupon", url: "/user/shop/manage-coupon" },
+              ],
+            },
           ]
         : []),
       {

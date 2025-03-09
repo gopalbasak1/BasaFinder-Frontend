@@ -10,7 +10,7 @@ import { BFTable } from "@/components/ui/core/BFTable";
 import TablePagination from "@/components/ui/core/BFTable/TablePagination";
 import { useState } from "react";
 import { toast } from "sonner";
-import { deleteRentalByAdmin, deleteRentalByLandlord } from "@/services/Rental";
+import { deleteRentalByAdmin,} from "@/services/Rental";
 import DeleteConfirmationModal from "@/components/ui/core/BFModel/DeleteConfirmationModal";
 
 const ManageAdminRental = ({

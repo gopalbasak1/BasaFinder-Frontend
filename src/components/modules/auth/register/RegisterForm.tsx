@@ -14,17 +14,27 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { registrationSchema } from "./registerValidation";
 import { registerUser } from "@/services/AuthService";
 import { toast } from "sonner";
+import ImagePreviewer from "@/components/ui/core/BFImageUploader/ImagePreviewer";
+import BFImageUploader from "@/components/ui/core/BFImageUploader";
+import { useState } from "react";
+import { BiBlock, BiRun } from "react-icons/bi";
 
 const RegisterForm = () => {
+  const [imageFiles, setImageFiles] = useState<File[] | []>([]);
+  const [imagePreview, setImagePreview] = useState<string[] | []>([]);
   const form = useForm({
     resolver: zodResolver(registrationSchema),
   });
+
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const redirect = searchParams.get("redirectPath");
 
   const {
     formState: { isSubmitting },
@@ -37,10 +47,23 @@ const RegisterForm = () => {
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     //console.log(data);
+    const modifiedData = {
+      ...data,
+      //landlordId: user?.userId,
+      imageUrls: imagePreview,
+    };
+    console.log("Submitting Data before: ", modifiedData);
+
     try {
-      const res = await registerUser(data);
+      const res = await registerUser(modifiedData);
+      console.log("Submitting Data after:", res);
       if (res.success) {
         toast.success(res?.message);
+        if (redirect) {
+          router.push(redirect);
+        } else {
+          router.push("/profile");
+        }
       } else {
         toast.error(res?.message);
       }
@@ -49,6 +72,7 @@ const RegisterForm = () => {
       //console.log(error);
     }
   };
+
   return (
     <div className="max-w-md border-2 border-gray-300 rounded-xl flex-grow w-full p-5">
       <Form {...form}>
@@ -96,20 +120,26 @@ const RegisterForm = () => {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="image"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Profile Image</FormLabel>
-                <FormControl>
-                  <Input type="file" {...field} />
-                </FormControl>
-                <FormDescription />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div>
+            {/* <div className="flex justify-between items-center border-t border-b py-3 my-5">
+              <p className="text-primary font-bold text-xl">Images</p>
+            </div> */}
+            <div className="flex gap-4 ">
+              {imagePreview?.length > 0 ? (
+                <ImagePreviewer
+                  setImageFiles={setImageFiles}
+                  imagePreview={imagePreview}
+                  setImagePreview={setImagePreview}
+                />
+              ) : (
+                <BFImageUploader
+                  setImageFiles={setImageFiles}
+                  setImagePreview={setImagePreview}
+                  label="Upload Logo"
+                />
+              )}
+            </div>
+          </div>
 
           <FormField
             control={form.control}
@@ -175,9 +205,9 @@ const RegisterForm = () => {
           />
 
           <Button
-            disabled={passwordConfirm && password !== passwordConfirm}
+            disabled={!!passwordConfirm && password !== passwordConfirm}
             type="submit"
-            className="w-full"
+            className="w-full cursor-pointer"
           >
             {isSubmitting ? "Registering...." : "Register"}
           </Button>
