@@ -20,14 +20,14 @@ const Footer = () => {
     { href: "#", icon: X },
   ];
   return (
-    <footer className="bg-white border-t border-gray-200 py-24">
+    <footer className=" border-t border-gray-200 py-24">
       <div className="max-w-6xl mx-auto px-4 text-center">
         <div className="flex flex-col items-center mb-6">
           <div className="flex items-center space-x-2">
             <h1 className="text-2xl font-black flex items-center">
               {/* <Logo /> */}
               <Image
-                className="w-[150px]"
+                className="w-[150px] border-4 rounded-b-full"
                 src={logo}
                 alt="logo"
                 width={100}

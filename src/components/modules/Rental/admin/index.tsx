@@ -10,7 +10,7 @@ import { BFTable } from "@/components/ui/core/BFTable";
 import TablePagination from "@/components/ui/core/BFTable/TablePagination";
 import { useState } from "react";
 import { toast } from "sonner";
-import { deleteRentalByAdmin,} from "@/services/Rental";
+import { deleteRentalByAdmin } from "@/services/Rental";
 import DeleteConfirmationModal from "@/components/ui/core/BFModel/DeleteConfirmationModal";
 
 const ManageAdminRental = ({
@@ -126,7 +126,7 @@ const ManageAdminRental = ({
           <button
             className="text-gray-500 hover:text-blue-500"
             title="View"
-            onClick={() => handleView(row.original)}
+            onClick={() => router.push(`/rental/${row.original._id}`)}
           >
             <Eye className="w-5 h-5" />
           </button>

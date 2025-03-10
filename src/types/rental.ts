@@ -13,7 +13,9 @@ export type RentalFormData = {
   availableFrom: string;
   category: string;
   description: string;
-  keyFeatures: { value: string }[];
-  specification: { key: string; value: string }[];
-  imageUrls: string; // ✅ Ensure images are stored as an array
+  keyFeatures: string[]; // 🔥 FIXED (Array of strings)
+  specification: { key: string; value: string }[]; // 🔥 FIXED (Array of objects)
+  imageUrls: string[]; // 🔥 FIXED (Array of strings)
+  ratingCount?: number;
+  averageRating?: number;
 };

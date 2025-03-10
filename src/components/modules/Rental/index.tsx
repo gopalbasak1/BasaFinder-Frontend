@@ -126,7 +126,7 @@ const ManageRental = ({
           <button
             className="text-gray-500 hover:text-blue-500"
             title="View"
-            onClick={() => handleView(row.original)}
+            onClick={() => router.push(`/rental/${row.original._id}`)}
           >
             <Eye className="w-5 h-5" />
           </button>

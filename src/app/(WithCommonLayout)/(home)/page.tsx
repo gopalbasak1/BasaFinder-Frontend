@@ -1,17 +1,16 @@
-"use client";
-
+import HeroSection from "@/components/modules/home/HeroSection";
 import HomePages from "@/components/modules/home/HeroSection";
 import Banner from "@/components/modules/home/HeroSection/Banner";
 import { useUser } from "@/context/UserContext";
+import { getAllRentalListing } from "@/services/Rental";
 
-const HomePage = () => {
-  const user = useUser();
-  console.log(user);
-
+const HomePage = async () => {
+  const rentals = await getAllRentalListing();
+  console.log(rentals);
   return (
-    <div>
+    <div className="container mx-auto">
       <Banner />
-      {/* <HomePages /> */}
+      <HeroSection rentals={rentals} />
     </div>
   );
 };

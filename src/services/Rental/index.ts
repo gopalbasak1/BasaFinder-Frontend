@@ -93,6 +93,48 @@ export const getAllRentalsByAdmin = async (
   }
 };
 
+export const getAllRentalListing = async (
+  page?: string,
+  limit?: string,
+  query?: { [key: string]: string | string[] | undefined }
+) => {
+  const params = new URLSearchParams();
+
+  if (query?.rentalAmount) {
+    params.append("minAmount", "0");
+    params.append("maxAmount", query?.rentalAmount.toString());
+  }
+
+  if (query?.category) {
+    params.append("category", query?.category.toString());
+  }
+
+  // if (query?.category) {
+  //   params.append("category", query?.category.toString());
+  // }
+
+  try {
+    const res = await fetch(
+      `${
+        process.env.NEXT_PUBLIC_BASE_API
+      }/rental/listings?limit=${limit}&page=${page}&${params.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        next: {
+          tags: ["RENTAL"], // Fixed typo in "RENTAl"
+        },
+      }
+    );
+    const data = await res.json();
+    return data;
+  } catch (error: any) {
+    return Error(error.message);
+  }
+};
+
 export const addRentalListing = async (data: string) => {
   try {
     console.log("🔍 API Request Data:", JSON.parse(data));

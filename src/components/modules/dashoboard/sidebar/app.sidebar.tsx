@@ -53,6 +53,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 },
               ],
             },
+            {
+              title: "Rental-Request",
+              url: `/landlord/request/manage-request`,
+              icon: Bot,
+              items: [
+                {
+                  title: "Manage Request",
+                  url: `/landlord/request/manage-request`,
+                },
+              ],
+            },
           ]
         : []),
       // Conditionally include the Rental section based on the user's role

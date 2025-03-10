@@ -1,9 +1,20 @@
-import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+"use client";
 
-const HeroSection = () => {
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { MoveRight } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import RentalHouseCard from "./RentalHouseCard/RentalHouseCard";
+import { RentalFormData } from "@/types";
+
+// Define the type for rental data response
+interface RentalResponse {
+  data: RentalFormData[];
+}
+
+const HeroSection = ({ rentals }: { rentals: RentalResponse }) => {
   const router = useRouter();
   const [search, setSearch] = useState({
     location: "",
@@ -12,90 +23,75 @@ const HeroSection = () => {
   });
 
   const handleSearch = () => {
-    // Redirect to search results page with query params
     router.push(
       `/search?location=${search.location}&price=${search.price}&bedrooms=${search.bedrooms}`
     );
   };
 
   return (
-    <section className="bg-gray-100 py-12 text-center">
-      <div className="container mx-auto px-4">
+    <section className="px-5 md:px-10 lg:px-20 py-10">
+      {/* Hero Content */}
+      <div className="text-center">
         <h1 className="text-3xl md:text-5xl font-bold mb-6">
           Find Your Perfect Rental House Today!
         </h1>
         <Button className="mb-6" onClick={() => router.push("/list-house")}>
           Post Rental House Info
         </Button>
-        <div className="grid md:grid-cols-3 gap-4 bg-white p-5 rounded-lg shadow-md">
-          <Input
-            type="text"
-            placeholder="Location"
-            value={search.location}
-            onChange={(e) => setSearch({ ...search, location: e.target.value })}
-          />
-          <Input
-            type="number"
-            placeholder="Max Price"
-            value={search.price}
-            onChange={(e) => setSearch({ ...search, price: e.target.value })}
-          />
-          <Input
-            type="number"
-            placeholder="Bedrooms"
-            value={search.bedrooms}
-            onChange={(e) => setSearch({ ...search, bedrooms: e.target.value })}
-          />
-          <Button className="col-span-3" onClick={handleSearch}>
-            Search
-          </Button>
-        </div>
       </div>
+
+      {/* Search Bar */}
+      <div className=" p-5 rounded-lg shadow-md grid md:grid-cols-3 gap-4">
+        <Input
+          type="text"
+          placeholder="Location"
+          value={search.location}
+          onChange={(e) => setSearch({ ...search, location: e.target.value })}
+        />
+        <Input
+          type="number"
+          placeholder="Max Price"
+          value={search.price}
+          onChange={(e) => setSearch({ ...search, price: e.target.value })}
+        />
+        <Input
+          type="number"
+          placeholder="Bedrooms"
+          value={search.bedrooms}
+          onChange={(e) => setSearch({ ...search, bedrooms: e.target.value })}
+        />
+        <Button className="col-span-3" onClick={handleSearch}>
+          Search
+        </Button>
+      </div>
+
+      {/* Rental Listings Section */}
+      <div className="flex justify-between items-center mt-10">
+        <h2 className="text-3xl font-bold text-violet-700">Explore Rentals</h2>
+        <Link href="/all-listings">
+          <Button
+            className="w-40 flex items-center justify-center gap-2 animate-move-right"
+            variant="outline"
+          >
+            More Rentals <MoveRight className="transition-transform" />
+          </Button>
+        </Link>
+      </div>
+
+      {/* Rental Grid */}
+      {rentals?.data?.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
+          {rentals.data.slice(0, 4).map((rental) => (
+            <RentalHouseCard key={rental._id} rental={rental} />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-10 text-gray-500">
+          <p>No rental properties available at the moment.</p>
+        </div>
+      )}
     </section>
   );
 };
 
-const RentalHouseCard = ({ house }) => {
-  return (
-    <div className="border rounded-lg p-4 shadow-md bg-white">
-      <img
-        src={house.imageUrls[0]}
-        alt="House"
-        className="w-full h-48 object-cover rounded-md"
-      />
-      <h2 className="text-lg font-semibold mt-2">
-        {house.address}, {house.district}
-      </h2>
-      <p className="text-gray-600 text-sm">{house.description}</p>
-      <div className="mt-3">
-        <p className="font-bold">Rent: ৳{house.rentAmount}</p>
-        <p className="text-sm">Bedrooms: {house.bedrooms}</p>
-      </div>
-      <Button
-        className="mt-4 w-full"
-        onClick={() => router.push(`/house/${house.holding}`)}
-      >
-        View Details
-      </Button>
-    </div>
-  );
-};
-
-const RentalHouseList = ({ houses }) => {
-  return (
-    <div className="container mx-auto my-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-      {houses.map((house) => (
-        <RentalHouseCard key={house.holding} house={house} />
-      ))}
-    </div>
-  );
-};
-
-export default function HomePages({ houses }) {
-  return (
-    <>
-      <HeroSection />
-      <RentalHouseList houses={houses} />
-    </>
-  );
-}
+export default HeroSection;
