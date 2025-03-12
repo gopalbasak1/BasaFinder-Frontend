@@ -62,12 +62,12 @@ const RegisterForm = () => {
       //console.log("Submitting Data after:", res);
       if (res.success) {
         toast.success(res?.message);
-        const userRole = res?.data?.role;
+
         // ✅ Update UserContext with logged-in user
         setUser(res.data);
         router.refresh();
 
-        router.push("/");
+        router.push("/login");
       } else {
         toast.error(res?.message);
       }
