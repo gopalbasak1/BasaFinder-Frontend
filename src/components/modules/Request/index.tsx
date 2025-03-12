@@ -12,7 +12,7 @@ import {
 import { updateRentalStatusRequestByLandlord } from "@/services/Request";
 import { toast } from "sonner";
 import { useState } from "react";
-import { GroupedRequests, RentalRequest } from "@/types";
+import { GroupedRequests, RentalRequest } from "@/types/requests";
 
 const ManageRequest = ({ requests }: { requests: RentalRequest[] }) => {
   const [updatedRequests, setUpdatedRequests] = useState(requests);

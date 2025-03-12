@@ -165,12 +165,6 @@ const ManageAdminRental = ({
     <div>
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold">Manage Rental Listings</h1>
-        <Button
-          onClick={() => router.push("/user/shop/products/add-product")}
-          size="sm"
-        >
-          Add Rental <Plus />
-        </Button>
       </div>
 
       <BFTable columns={columns} data={rentals || []} />

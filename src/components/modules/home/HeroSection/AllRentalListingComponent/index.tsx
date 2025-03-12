@@ -5,7 +5,7 @@ import { RentalFormData } from "@/types";
 import { getAllRentalListing } from "@/services/Rental";
 import { Slider } from "@/components/ui/slider";
 
-const AllRentalListingComponents = ({ page }: { page: string }) => {
+const AllRentalListingComponents = () => {
   const [allRentals, setAllRentals] = useState<RentalFormData[]>([]);
   const [filteredData, setFilteredData] = useState<RentalFormData[]>([]);
   const [isLoading, setIsLoading] = useState(true);

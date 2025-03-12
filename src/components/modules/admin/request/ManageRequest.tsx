@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useUser } from "@/context/UserContext"; // Import user context
-import { RentalRequest } from "@/types";
+import { RentalRequest } from "@/types/requests";
 
 const ManageRequest = ({ requests }: { requests: RentalRequest[] }) => {
   const { user } = useUser(); // Get logged-in user
