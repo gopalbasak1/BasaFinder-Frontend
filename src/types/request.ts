@@ -5,6 +5,13 @@ export interface Tenant {
   phoneNumber: string;
 }
 
+export interface Landlord {
+  _id: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+}
+
 export interface Listing {
   _id: string;
   address: string;
@@ -13,6 +20,7 @@ export interface Listing {
   category: string;
   availableFrom: string;
   keyFeatures: string[];
+  landlordId: Landlord; // ✅ Add landlordId here
 }
 
 export interface RentalRequest {
@@ -23,6 +31,7 @@ export interface RentalRequest {
   status: string;
   paymentStatus: string;
   message: string;
+  moveInDate?: string; // ✅ Add moveInDate as optional (if it may be missing)
 }
 
 export interface GroupedRequests {

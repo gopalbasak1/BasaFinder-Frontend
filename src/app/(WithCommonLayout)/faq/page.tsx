@@ -1,4 +1,11 @@
+import { Metadata } from "next";
 import React from "react";
+
+export const metadata: Metadata = {
+  title: "FAQ - BasaFinder",
+  description:
+    "Find answers to common questions about BasaFinder, how to find rentals, and how our platform works.",
+};
 
 const FAQPage = () => {
   return (

@@ -14,6 +14,7 @@ import {
 import { motion } from "framer-motion";
 import { useUser } from "@/context/UserContext";
 import { useEffect, useState } from "react";
+
 type Rental = {
   _id: string;
   holding: string;
@@ -136,9 +137,15 @@ const LandlordChart: React.FC<LandlordChartProps> = ({
   const data = [
     { name: "Total Rentals", value: formatValue(rentals.length) },
     { name: "Total Requests", value: formatValue(rentalRequests.length) },
-
+    {
+      name: "Total Rejection",
+      value: formatValue(
+        rentalRequests.filter((r: any) => r.status === "rejected").length
+      ),
+    },
     { name: "Paid Tenants", value: paidTenants },
     { name: "Transactions", value: transactions },
+
     {
       name: "Payment Pending",
       value: formatValue(
@@ -253,7 +260,7 @@ const LandlordChart: React.FC<LandlordChartProps> = ({
       {/* New Bar Chart for Listing Requests */}
       <div className="bg-white dark:bg-[#2c3456] p-6 rounded-lg shadow-md mt-6">
         <h3 className="text-lg font-semibold text-gray-700 dark:text-[#5ea5d4] mb-4 text-center">
-          Requests Per Listing
+          Requests Per Rental
         </h3>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart

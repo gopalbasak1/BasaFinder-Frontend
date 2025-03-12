@@ -1,5 +1,11 @@
-"use client";
 import { Facebook, Twitter, Instagram, Mail, Phone } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About Us - BasaFinder",
+  description:
+    "Learn more about BasaFinder, our mission, and our dedicated team working to connect renters with their perfect homes.",
+};
 
 const AboutUs = () => {
   return (

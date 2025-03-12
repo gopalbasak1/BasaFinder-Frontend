@@ -8,10 +8,14 @@ const FilterSidebar = () => {
   const router = useRouter();
 
   // State for filter options fetched from the backend
-  const [filterOptions, setFilterOptions] = useState({
+  const [filterOptions, setFilterOptions] = useState<{
+    categories: string[];
+    divisions: string[];
+    districts: Record<string, string[]>; // Fixing the type here
+  }>({
     categories: [],
     divisions: [],
-    districts: {},
+    districts: {}, // Now correctly typed
   });
 
   // State for loading and error

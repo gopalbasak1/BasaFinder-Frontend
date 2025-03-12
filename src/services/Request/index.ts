@@ -162,3 +162,92 @@ export const verifyPayment = async (orderId: string) => {
     return { success: false, message: "Something went wrong!" };
   }
 };
+
+export const getAllRentalRequestByAdmin = async (
+  page?: string,
+  limit?: string,
+  query?: { [key: string]: string | string[] | undefined }
+) => {
+  const params = new URLSearchParams();
+
+  if (query?.rentalAmount) {
+    params.append("minAmount", "0");
+    params.append("maxAmount", query?.rentalAmount.toString());
+  }
+
+  if (query?.category) params.append("category", query.category.toString());
+  if (query?.holding) params.append("holding", query.holding.toString());
+  if (query?.district) params.append("district", query.district.toString());
+  if (query?.division) params.append("division", query.division.toString());
+  if (query?.bedrooms) params.append("bedrooms", query.bedrooms.toString());
+  if (query?.rentAmount)
+    params.append("rentAmount", query.rentAmount.toString());
+
+  const accessToken = (await cookies()).get("accessToken")?.value || "";
+  try {
+    const res = await fetch(
+      `${
+        process.env.NEXT_PUBLIC_BASE_API
+      }/rental-request/admin/requests?limit=${limit}&page=${page}&${params.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: accessToken, // Fix undefined error
+          "Content-Type": "application/json",
+        },
+        next: {
+          tags: ["REQUEST"], // Fixed typo in "RENTAl"
+        },
+      }
+    );
+    const data = await res.json();
+    return data;
+  } catch (error: any) {
+    return Error(error.message);
+  }
+};
+
+// export const getAllRentals = async (
+//   page?: string,
+//   limit?: string,
+//   query?: { [key: string]: string | string[] | undefined }
+// ) => {
+//   const params = new URLSearchParams();
+
+//   if (query?.rentalAmount) {
+//     params.append("minAmount", "0");
+//     params.append("maxAmount", query?.rentalAmount.toString());
+//   }
+
+//   if (query?.category) params.append("category", query.category.toString());
+//   if (query?.holding) params.append("holding", query.holding.toString());
+//   if (query?.district) params.append("district", query.district.toString());
+//   if (query?.division) params.append("division", query.division.toString());
+//   if (query?.bedrooms) params.append("bedrooms", query.bedrooms.toString());
+//   if (query?.rentAmount)
+//     params.append("rentAmount", query.rentAmount.toString());
+
+//   const accessToken = (await cookies()).get("accessToken")?.value || "";
+
+//   try {
+//     const res = await fetch(
+//       `${
+//         process.env.NEXT_PUBLIC_BASE_API
+//       }/rental/landlords/listings?limit=${limit}&page=${page}&${params.toString()}`,
+//       {
+//         method: "GET",
+//         headers: {
+//           Authorization: accessToken, // Fix undefined error
+//           "Content-Type": "application/json",
+//         },
+//         next: {
+//           tags: ["RENTAL"], // Fixed typo in "RENTAl"
+//         },
+//       }
+//     );
+//     const data = await res.json();
+//     return data;
+//   } catch (error: any) {
+//     return Error(error.message);
+//   }
+// };

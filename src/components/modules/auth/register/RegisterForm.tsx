@@ -27,7 +27,7 @@ import { BiBlock, BiRun } from "react-icons/bi";
 import { useUser } from "@/context/UserContext";
 
 const RegisterForm = () => {
-  const { user } = useUser();
+  const { setUser } = useUser();
   const [imageFiles, setImageFiles] = useState<File[] | []>([]);
   const [imagePreview, setImagePreview] = useState<string[] | []>([]);
   const form = useForm({
@@ -58,14 +58,16 @@ const RegisterForm = () => {
 
     try {
       const res = await registerUser(modifiedData);
-      console.log("Submitting Data after:", res);
+
+      //console.log("Submitting Data after:", res);
       if (res.success) {
         toast.success(res?.message);
-        if (redirect) {
-          router.push(redirect);
-        } else {
-          router.push("/");
-        }
+        const userRole = res?.data?.role;
+        // ✅ Update UserContext with logged-in user
+        setUser(res.data);
+        router.refresh();
+
+        router.push("/");
       } else {
         toast.error(res?.message);
       }

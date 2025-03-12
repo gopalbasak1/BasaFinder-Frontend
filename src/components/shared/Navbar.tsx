@@ -40,7 +40,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className="border-b w-full bg-white dark:bg-gray-900 transition-colors duration-300">
+    <header className="border-b w-full bg-white dark:bg-gray-900 transition-colors duration-300 fixed top-0 left-0 right-0 z-50 shadow-md">
       <div className="container flex justify-between items-center mx-auto h-[70px] px-4 md:px-6 py-2">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
@@ -82,16 +82,6 @@ export default function Navbar() {
 
         {/* Right-side Actions */}
         <div className="flex items-center gap-2">
-          {/* Wishlist */}
-          <Button variant="outline" className="rounded-full p-0 size-10">
-            <Heart className="text-gray-700 dark:text-white" />
-          </Button>
-
-          {/* Shopping Bag */}
-          <Button variant="outline" className="rounded-full p-0 size-10">
-            <ShoppingBag className="text-gray-700 dark:text-white" />
-          </Button>
-
           {/* Dark Mode Toggle */}
           {mounted && (
             <Button

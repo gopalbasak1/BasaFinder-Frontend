@@ -109,6 +109,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               ],
             },
             {
+              title: "Rental Request",
+              url: `/admin/request`,
+              icon: Bot,
+            },
+            {
+              title: "Payment",
+              url: `/admin/payment`,
+              icon: Bot,
+            },
+            {
               title: "User",
               url: `/admin/user/manage-users`,
               icon: Bot,

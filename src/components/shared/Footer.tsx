@@ -22,7 +22,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="border-t border-gray-200 py-12 bg-gray-50">
+    <footer className="border-t border-gray-200 py-12 ">
       <div className="max-w-6xl mx-auto px-4 text-center">
         {/* Logo & Description */}
         <div className="flex flex-col items-center mb-6">

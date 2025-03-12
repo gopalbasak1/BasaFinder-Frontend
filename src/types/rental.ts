@@ -4,9 +4,13 @@ export type RentalFormData = {
   tenantId?: Tenant; // ✅ Added tenantId
   address: string;
   division: string;
+  holding: string;
+  unitNumber: string;
+  bedrooms: number;
+  rentAmount: number;
   district: string;
   upazila: string;
-  postalCode: string;
+  postalCode: 0;
   citycorporation: string;
   availableFrom: string;
   category: string;
@@ -44,6 +48,10 @@ export interface Listing {
   category: string;
   rentAmount: number;
   imageUrls?: string[];
+  address: string;
+  district: string;
+  upazila: string;
+  citycorporation: string;
   landlordId?: {
     name: string;
     email: string;

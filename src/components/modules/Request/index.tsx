@@ -126,8 +126,13 @@ const ManageRequest = ({ requests }: { requests: RentalRequest[] }) => {
                         <TableCell>{request.status}</TableCell>
                         <TableCell>{request.paymentStatus}</TableCell>
                         <TableCell>
-                          {new Date(request.moveInDate).toLocaleDateString()}
+                          {(request as any).moveInDate
+                            ? new Date(
+                                (request as any).moveInDate
+                              ).toLocaleDateString()
+                            : "N/A"}
                         </TableCell>
+
                         <TableCell>
                           {request.message.split(" ").length > 4 ? (
                             <>

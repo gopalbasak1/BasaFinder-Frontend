@@ -22,7 +22,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Districts, Divisions, DivisionType } from "@/constants/address";
 import { useUser } from "@/context/UserContext";
 import { updateRentalListingByLandlord } from "@/services/Rental";
-import { RentalFormData } from "@/types";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -35,6 +34,29 @@ import {
 } from "react-hook-form";
 import { toast } from "sonner";
 
+type RentalFormData = {
+  _id: string;
+  keyFeatures: { value: string }[];
+
+  specification: { key: string; value: string }[];
+  holding: string;
+  description: string;
+  rentAmount: number;
+  category: string;
+  unitNumber: string;
+  division: string;
+  district: string;
+  postalCode: number | undefined;
+  imageUrls: string[];
+  upazila: string;
+  address: string;
+  citycorporation: string;
+  bedrooms: number;
+  availableFrom?: string;
+  // keyFeatures: { value: string }[];
+  // specification: { key: string; value: string }[];
+};
+
 const UpdateRentalForm = ({ rental }: { rental: RentalFormData }) => {
   const { user, isLoading } = useUser();
   const router = useRouter();
@@ -45,15 +67,15 @@ const UpdateRentalForm = ({ rental }: { rental: RentalFormData }) => {
     defaultValues: {
       holding: rental?.holding || "",
       description: rental?.description || "",
-      rentAmount: rental?.rentAmount?.toString() || "",
+      rentAmount: rental?.rentAmount || 0,
       category: rental?.category || "",
       unitNumber: rental?.unitNumber || "",
       division: rental?.division || "",
       district: rental?.district || "",
       upazila: rental?.upazila || "",
-      postalCode: rental?.postalCode?.toString() || "",
+      postalCode: rental?.postalCode || 0,
       citycorporation: rental?.citycorporation || "",
-      bedrooms: rental?.bedrooms?.toString() || "",
+      bedrooms: rental?.bedrooms || 0,
       address: rental?.address || "",
       availableFrom: rental?.availableFrom
         ? new Date(rental.availableFrom).toISOString().split("T")[0]
@@ -61,7 +83,7 @@ const UpdateRentalForm = ({ rental }: { rental: RentalFormData }) => {
 
       // Fix: Ensure keyFeatures is an array of objects with string values
       keyFeatures: rental?.keyFeatures?.map((feature) => ({
-        value: typeof feature === "string" ? feature : feature?.value,
+        value: typeof feature === "string" ? feature : feature.value,
       })) || [{ value: "" }],
 
       // Fix: Ensure specification values are strings

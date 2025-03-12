@@ -1,12 +1,9 @@
 export const protectedRoutes = [
-  "/login",
-  // "/landlord/rental/create-rental",
-  "/admin",
-  "/admin/:page",
-  "/landlord",
-  "/landlord/:page",
-  "/tenant",
-  "/tenant/:page",
-  "/settings/profile",
-  "/settings/password",
+  /^\/login$/,
+  /^\/admin(\/.*)?$/,
+  /^\/landlord(\/.*)?$/,
+  /^\/tenant(\/.*)?$/,
+  /^\/settings\/profile$/,
+  /^\/settings\/password$/,
+  /^\/rental\/[^/]+$/, // Matches rental/:id (e.g., /rental/67cf297036b1c6f250a712ae)
 ];

@@ -1,12 +1,29 @@
-export default function AdminDashboard() {
+import AdminDashboardChart from "@/components/modules/admin/dashboard/cart/AdminDashboardChart";
+import { getAllRentalsByAdmin } from "@/services/Rental";
+import { getAllRentalRequestByAdmin } from "@/services/Request";
+import { getAllUsersByAdmin } from "@/services/User";
+
+const AdminDashboard = async () => {
+  const { data: userData, meta: userMeta } = await getAllUsersByAdmin(
+    undefined,
+    "100"
+  );
+  const { data: rentalData, meta: rentalMeta } = await getAllRentalsByAdmin(
+    undefined,
+    "100"
+  );
+  const { data: requestData, meta: requestMeta } =
+    await getAllRentalRequestByAdmin(undefined, "100");
+
   return (
     <div>
-      <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-        <div className="aspect-video rounded-xl bg-muted " />
-        <div className="aspect-video rounded-xl bg-muted" />
-        <div className="aspect-video rounded-xl bg-muted" />
-      </div>
-      <div className="min-h-[100vh] rounded-xl bg-muted mt-4" />
+      <AdminDashboardChart
+        userData={userData}
+        rentalData={rentalData}
+        requestData={requestData}
+      />
     </div>
   );
-}
+};
+
+export default AdminDashboard;

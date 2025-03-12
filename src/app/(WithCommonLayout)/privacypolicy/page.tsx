@@ -1,4 +1,10 @@
-import React from "react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy - BasaFinder",
+  description:
+    "Read our privacy policy to understand how we collect, use, and protect your personal data.",
+};
 
 const PrivacyPolicy = () => {
   return (

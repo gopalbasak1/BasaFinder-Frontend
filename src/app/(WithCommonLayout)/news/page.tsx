@@ -1,3 +1,11 @@
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Latest News - BasaFinder",
+  description:
+    "Stay updated with the latest news on rental listings, new features, and platform updates from BasaFinder.",
+};
+
 const News = () => {
   return (
     <div>

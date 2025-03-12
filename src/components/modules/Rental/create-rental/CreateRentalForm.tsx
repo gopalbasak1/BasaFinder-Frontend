@@ -22,7 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Districts, Divisions, DivisionType } from "@/constants/address";
 import { useUser } from "@/context/UserContext";
 import { addRentalListing } from "@/services/Rental";
-import { RentalFormData } from "@/types";
+
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -35,6 +35,29 @@ import {
 } from "react-hook-form";
 import { toast } from "sonner";
 
+type RentalFormData = {
+  _id: string;
+  keyFeatures: { value: string }[];
+
+  specification: { key: string; value: string }[];
+  holding: string;
+  description: string;
+  rentAmount: number;
+  category: string;
+  unitNumber: string;
+  division: string;
+  district: string;
+  postalCode: number | undefined;
+  imageUrls: string[];
+  upazila: string;
+  address: string;
+  citycorporation: string;
+  bedrooms: number;
+  availableFrom?: string;
+  // keyFeatures: { value: string }[];
+  // specification: { key: string; value: string }[];
+};
+
 const CreateRentalForm = () => {
   const { user, isLoading } = useUser();
   const [imageFiles, setImageFiles] = useState<File[] | []>([]);
@@ -45,15 +68,15 @@ const CreateRentalForm = () => {
     defaultValues: {
       holding: "",
       description: "",
-      rentAmount: "",
+      rentAmount: 0,
       category: "",
       unitNumber: "",
       division: "",
       district: "",
       upazila: "",
-      postalCode: "",
+      postalCode: 0,
       citycorporation: "",
-      bedrooms: "",
+      bedrooms: 0,
       address: "",
       availableFrom: "",
       keyFeatures: [{ value: "" }],
