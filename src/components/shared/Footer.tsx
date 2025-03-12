@@ -1,4 +1,4 @@
-import { Facebook, Instagram, X } from "lucide-react";
+import { Facebook, Instagram, X, Mail, Phone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import logo from "../../assests/Basa.svg";
@@ -6,44 +6,41 @@ import logo from "../../assests/Basa.svg";
 const Footer = () => {
   const navLinks = [
     { href: "/", label: "Home" },
-    { href: "/shop", label: "Shop" },
-    { href: "/products", label: "App Products" },
+    { href: "/all-listings", label: "All Listings" },
     { href: "/about", label: "About Us" },
     { href: "/testimonial", label: "Testimonial" },
-    { href: "/blogs", label: "Blogs" },
-    { href: "/contact", label: "Contact Us" },
+    { href: "/faq", label: "FAQ" },
+    { href: "/termsconditions", label: "Terms & Conditions" },
+    { href: "/news", label: "News" },
+    { href: "/privacypolicy", label: "Privacy Policy" },
   ];
 
   const socialLinks = [
-    { href: "#", icon: Facebook },
-    { href: "#", icon: Instagram },
-    { href: "#", icon: X },
+    { href: "https://facebook.com", icon: Facebook },
+    { href: "https://instagram.com", icon: Instagram },
+    { href: "https://twitter.com", icon: X },
   ];
+
   return (
-    <footer className=" border-t border-gray-200 py-24">
+    <footer className="border-t border-gray-200 py-12 bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 text-center">
+        {/* Logo & Description */}
         <div className="flex flex-col items-center mb-6">
-          <div className="flex items-center space-x-2">
-            <h1 className="text-2xl font-black flex items-center">
-              {/* <Logo /> */}
-              <Image
-                className="w-[150px] border-4 rounded-b-full"
-                src={logo}
-                alt="logo"
-                width={100}
-                height={100}
-              />
-              Basa Finder
-            </h1>
-          </div>
-          <p className="text-gray-600 mt-3 w-1/2">
-            Save big this Black Friday with unbeatable deals on tech, home
-            essentials, fashion, and more! Limited stock.
+          <Image
+            className="w-32 md:w-40 border-4 rounded-b-full"
+            src={logo}
+            alt="logo"
+            width={100}
+            height={100}
+          />
+          <h1 className="text-2xl font-black mt-3">Basa Finder</h1>
+          <p className="text-gray-600 mt-2 text-sm md:text-base max-w-md">
+            Connecting renters with their perfect homes. Hassle-free and secure.
           </p>
         </div>
 
-        <hr />
-        <ul className="flex justify-center space-x-6 text-sm text-gray-800 font-medium my-4">
+        {/* Navigation Links */}
+        <ul className="flex flex-wrap justify-center gap-4 md:gap-6 text-sm md:text-base text-gray-800 font-medium my-4">
           {navLinks.map((link) => (
             <li key={link.href}>
               <Link href={link.href} className="hover:text-purple-600">
@@ -53,16 +50,39 @@ const Footer = () => {
           ))}
         </ul>
 
-        <div className="flex justify-center space-x-4">
+        {/* Contact Information */}
+        <div className="mt-6 flex flex-col md:flex-row items-center justify-center gap-4 text-gray-800">
+          <a
+            href="mailto:gopalbasak2324@gmail.com"
+            className="flex items-center gap-2 hover:text-purple-600"
+          >
+            <Mail className="w-5 h-5" /> gopalbasak2324@gmail.com
+          </a>
+          <a
+            href="tel:+8801747065084"
+            className="flex items-center gap-2 hover:text-purple-600"
+          >
+            <Phone className="w-5 h-5" /> +880 1747-065084
+          </a>
+        </div>
+
+        {/* Social Media Icons */}
+        <div className="mt-6 flex justify-center space-x-6">
           {socialLinks.map(({ href, icon: Icon }, index) => (
             <Link
               href={href}
               key={index}
+              target="_blank"
               className="text-gray-600 hover:text-purple-600"
             >
-              <Icon className="w-5 h-5" />
+              <Icon className="w-6 h-6" />
             </Link>
           ))}
+        </div>
+
+        {/* Copyright Section */}
+        <div className="mt-8 text-gray-500 text-sm">
+          &copy; {new Date().getFullYear()} Basa Finder. All rights reserved.
         </div>
       </div>
     </footer>

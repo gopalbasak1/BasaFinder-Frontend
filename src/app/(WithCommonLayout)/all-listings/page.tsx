@@ -1,14 +1,15 @@
 import AllRentalListingComponents from "@/components/modules/home/HeroSection/AllRentalListingComponent";
 
-import { getAllRentalListing } from "@/services/Rental";
-import { RentalFormData } from "@/types";
+const AllListingsPage = ({
+  searchParams,
+}: {
+  searchParams: { page?: string };
+}) => {
+  const page = searchParams?.page || "1"; // Extract page number from URL
 
-const AllListingsPage = () => {
   return (
-    <div className="container mx-auto">
-      <div className="">
-        <AllRentalListingComponents />
-      </div>
+    <div className="container mx-auto my-10">
+      <AllRentalListingComponents page={page} />
     </div>
   );
 };

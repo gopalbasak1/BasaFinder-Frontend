@@ -12,47 +12,13 @@ import {
 import { updateRentalStatusRequestByLandlord } from "@/services/Request";
 import { toast } from "sonner";
 import { useState } from "react";
-
-interface Tenant {
-  _id: string;
-  name: string;
-  email: string;
-  phoneNumber: string;
-}
-
-interface Listing {
-  _id: string;
-  address: string;
-  unitNumber: string;
-  rentAmount: number;
-  category: string;
-  availableFrom: string;
-  keyFeatures: string[];
-}
-
-interface RentalRequest {
-  _id: string;
-  tenantId: Tenant;
-  listingId: Listing;
-  rentalDuration: number;
-  status: string;
-  paymentStatus: string;
-  message: string;
-}
-
-interface GroupedRequests {
-  [listingId: string]: {
-    listing: Listing;
-    requests: RentalRequest[];
-    hasApprovedRequest: boolean;
-  };
-}
+import { GroupedRequests, RentalRequest } from "@/types";
 
 const ManageRequest = ({ requests }: { requests: RentalRequest[] }) => {
   const [updatedRequests, setUpdatedRequests] = useState(requests);
   const [selectedMessage, setSelectedMessage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  console.log(requests);
   if (!updatedRequests || updatedRequests.length === 0) {
     return <div>No rental requests found.</div>;
   }
@@ -136,8 +102,10 @@ const ManageRequest = ({ requests }: { requests: RentalRequest[] }) => {
                       <TableHead>Phone</TableHead>
                       <TableHead>Rental Duration</TableHead>
                       <TableHead>Status</TableHead>
+                      <TableHead>Tenant Movie-In-Date</TableHead>
                       <TableHead>Payment Status</TableHead>
                       <TableHead>Message</TableHead>
+                      <TableHead>Total Rent Amount</TableHead>
                       <TableHead>Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -158,6 +126,9 @@ const ManageRequest = ({ requests }: { requests: RentalRequest[] }) => {
                         <TableCell>{request.status}</TableCell>
                         <TableCell>{request.paymentStatus}</TableCell>
                         <TableCell>
+                          {new Date(request.moveInDate).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>
                           {request.message.split(" ").length > 4 ? (
                             <>
                               {request.message.split(" ").slice(0, 5).join(" ")}
@@ -173,6 +144,10 @@ const ManageRequest = ({ requests }: { requests: RentalRequest[] }) => {
                           ) : (
                             request.message
                           )}
+                        </TableCell>
+                        <TableCell>
+                          {request.rentalDuration *
+                            request.listingId.rentAmount}
                         </TableCell>
                         <TableCell className="space-x-2">
                           <Button
@@ -211,7 +186,7 @@ const ManageRequest = ({ requests }: { requests: RentalRequest[] }) => {
       )}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-red-500 border-2 p-6 rounded-lg shadow-lg max-w-lg w-full">
+          <div className="dark:bg-black bg-white border-red-500 border-2 p-6 rounded-lg shadow-lg max-w-lg w-full">
             <h3 className="text-lg font-semibold mb-4">Full Message</h3>
             <p>{selectedMessage}</p>
             <Button className="mt-4" onClick={() => setIsModalOpen(false)}>

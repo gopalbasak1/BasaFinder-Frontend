@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +14,7 @@ import { RentalFormData } from "@/types";
 import { requestToRental } from "@/services/Request";
 import { toast } from "sonner";
 import { useUser } from "@/context/UserContext";
+import { useRouter } from "next/navigation";
 // Import user authentication hook
 
 interface RentalRequestModalProps {
@@ -30,6 +32,8 @@ const RentalRequestModal: React.FC<RentalRequestModalProps> = ({
   const [specialRequest, setSpecialRequest] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [rentalDurationError, setRentalDurationError] = useState("");
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   // Validate rental duration
   const validateRentalDuration = (value: string) => {
@@ -54,7 +58,7 @@ const RentalRequestModal: React.FC<RentalRequestModalProps> = ({
       toast.error("Please fill in all required fields and agree to terms.");
       return;
     }
-
+    setLoading(true);
     const requestData = {
       tenantId: user?._id, // Auto-populated user ID
       listingId: rental?._id, // Rental listing ID
@@ -71,9 +75,14 @@ const RentalRequestModal: React.FC<RentalRequestModalProps> = ({
       }
 
       toast.success(response.message);
+      router.push(
+        `${process.env.NEXT_PUBLIC_FRONTEND_URL}/tenant/request/request-status`
+      );
       onClose(); // Close modal
     } catch (error: any) {
       toast.error(error.message);
+    } finally {
+      setLoading(false); // Stop loading in all cases
     }
   };
 
@@ -171,8 +180,34 @@ const RentalRequestModal: React.FC<RentalRequestModalProps> = ({
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={!isFormValid}>
-            Submit Request
+          <Button onClick={handleSubmit} disabled={!isFormValid || loading}>
+            {loading ? (
+              <span className="flex items-center">
+                <svg
+                  className="animate-spin h-5 w-5 mr-2 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M12 2a10 10 0 000 20V2z"
+                  ></path>
+                </svg>
+                Submitting...
+              </span>
+            ) : (
+              "Submit Request"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

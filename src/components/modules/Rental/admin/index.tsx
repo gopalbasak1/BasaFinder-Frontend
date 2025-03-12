@@ -55,7 +55,10 @@ const ManageAdminRental = ({
     {
       id: "sl",
       header: "Sl No.",
-      cell: ({ row }) => <span>{row.index + 1}</span>, // Serial Number
+      cell: ({ row }) => {
+        const serialNumber = (meta.page - 1) * meta.limit + row.index + 1;
+        return <span>{serialNumber}</span>;
+      },
     },
 
     {
@@ -89,6 +92,11 @@ const ManageAdminRental = ({
       accessorKey: "holding",
       header: "Holding ID",
       cell: ({ row }) => <span>{row.original.holding}</span>,
+    },
+    {
+      accessorKey: "unitNumber",
+      header: "Unit Number",
+      cell: ({ row }) => <span>{row.original.unitNumber}</span>,
     },
     {
       accessorKey: "category",

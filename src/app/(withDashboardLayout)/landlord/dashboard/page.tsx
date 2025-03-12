@@ -1,12 +1,27 @@
-export default function LandlordDashboard() {
+import LandlordChart from "@/components/modules/Rental/chart/LandlordChart";
+import { useUser } from "@/context/UserContext";
+import { getAllRentals } from "@/services/Rental";
+import { getAllRentalRequestByLandlord } from "@/services/Request";
+
+const LandlordDashboard = async () => {
+  // Fetch rental data
+  const { data: rentals, meta: rentalsMeta } = await getAllRentals(
+    undefined,
+    "100"
+  );
+
+  const { data: rentalRequests, meta: rentalRequestsMeta } =
+    await getAllRentalRequestByLandlord();
+
   return (
-    <div>
-      <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-        <div className="aspect-video rounded-xl bg-muted " />
-        <div className="aspect-video rounded-xl bg-muted" />
-        <div className="aspect-video rounded-xl bg-muted" />
-      </div>
-      <div className="min-h-[100vh] rounded-xl bg-muted mt-4" />
+    <div className="p-5">
+      <LandlordChart
+        rentals={rentals}
+        rentalsMeta={rentalsMeta}
+        rentalRequests={rentalRequests}
+      />
     </div>
   );
-}
+};
+
+export default LandlordDashboard;

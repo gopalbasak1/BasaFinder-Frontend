@@ -53,7 +53,7 @@ const RentalDetailsComponentsPage = ({
           <h2 className="font-bold text-2xl mb-2">
             {rental?.holding} - {rental?.address}
           </h2>
-          <p className="font-bold">Unit: {rental.unitNumber}</p>
+          <p className="font-bold">Unit: {rental?.unitNumber}</p>
           <p className="text-gray-500">{rental?.description}</p>
 
           {/* Location */}

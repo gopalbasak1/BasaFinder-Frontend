@@ -1,197 +1,188 @@
 "use client";
+
 import { useEffect, useState } from "react";
-import { Slider } from "@/components/ui/slider";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Star } from "lucide-react";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
-// Import API functions (Update these with actual API calls)
-// import { getAllDivisions } from "@/services/Division";
-// import { getAllCategories } from "@/services/Category";
-
-export default function FilterSidebar() {
-  const [price, setPrice] = useState([0, 500000]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [categories, setCategories] = useState([]);
-  const [divisions, setDivisions] = useState([]);
-  const [districts, setDistricts] = useState([]);
-  const [selectedDivision, setSelectedDivision] = useState("");
-
-  const router = useRouter();
-  const pathname = usePathname();
+const FilterSidebar = () => {
   const searchParams = useSearchParams();
+  const router = useRouter();
 
+  // State for filter options fetched from the backend
+  const [filterOptions, setFilterOptions] = useState({
+    categories: [],
+    divisions: [],
+    districts: {},
+  });
+
+  // State for loading and error
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // State for selected filters
+  const [filters, setFilters] = useState({
+    category: searchParams.get("category") || "",
+    rentalAmount: searchParams.get("rentAmount") || "",
+    division: searchParams.get("division") || "",
+    district: searchParams.get("district") || "",
+    bedrooms: searchParams.get("bedrooms") || "",
+  });
+
+  // Fetch filter options dynamically from the backend
   useEffect(() => {
-    const fetchFilters = async () => {
-      setIsLoading(true);
-      try {
-        const [{ data: categoriesData }, { data: divisionsData }] =
-          // await Promise.all([getAllCategories(), getAllDivisions()]);
+    const fetchFilterOptions = async () => {
+      setLoading(true);
+      setError("");
 
-          setCategories(categoriesData);
-        setDivisions(divisionsData);
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_API}/all-listings/filters`
+        );
+
+        if (!res.ok) {
+          throw new Error(`HTTP Error! Status: ${res.status}`);
+        }
+
+        const data = await res.json();
+        console.log("Fetched filter data:", data); // Debugging log
+
+        setFilterOptions({
+          categories: data.categories || [],
+          divisions: data.divisions || [],
+          districts: data.districts || {}, // Expecting { divisionName: ["district1", "district2"] }
+        });
+
+        setLoading(false);
       } catch (error) {
-        console.error("Failed to fetch filters", error);
-        toast.error("Failed to load filters.");
-      } finally {
-        setIsLoading(false);
+        setError("Failed to load filters. Please try again.");
+        console.error("Error fetching filter options:", error);
+        setLoading(false);
       }
     };
 
-    fetchFilters();
+    fetchFilterOptions();
   }, []);
 
-  useEffect(() => {
-    if (selectedDivision) {
-      const selectedDiv = divisions.find(
-        (div) => div.name === selectedDivision
-      );
-      if (selectedDiv) setDistricts(selectedDiv.districts || []);
-    } else {
-      setDistricts([]);
-    }
-  }, [selectedDivision, divisions]);
+  // Handle input changes
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
 
-  const handleSearchQuery = (query: string, value: string | number) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (value) {
-      params.set(query, value.toString());
+    // Reset district if division changes
+    if (name === "division") {
+      setFilters((prev) => ({
+        ...prev,
+        division: value,
+        district: "", // Reset district when division changes
+      }));
     } else {
-      params.delete(query);
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
-    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+
+  // Apply filters by updating the URL
+  const applyFilters = () => {
+    const query = new URLSearchParams(filters);
+    router.push(`/all-listings?page=1&${query.toString()}`);
   };
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold">Filter</h2>
-        {searchParams.toString().length > 0 && (
-          <Button
-            onClick={() => router.push(pathname, { scroll: false })}
-            size="sm"
-            className="bg-black hover:bg-gray-700 ml-5"
-          >
-            Clear Filters
-          </Button>
-        )}
-      </div>
+    <div className="p-4 border rounded-lg shadow-sm">
+      <h2 className="text-lg font-semibold mb-3">Filter Rentals</h2>
 
-      {/* Price Filter */}
-      <div className="mb-6">
-        <h2 className="text-lg font-semibold mb-4">Rent Amount</h2>
-        <Slider
-          min={0}
-          max={500000}
-          step={1000}
-          defaultValue={[0, 500000]}
-          onValueChange={(value) => {
-            setPrice(value);
-            handleSearchQuery("rentAmount", `${value[0]}-${value[1]}`);
-          }}
-          className="w-full"
-        />
-        <p className="text-sm mt-2">
-          Selected Range: ৳{price[0]} - ৳{price[1]}
-        </p>
-      </div>
+      {/* Show error message if API fails */}
+      {error && <p className="text-red-500">{error}</p>}
 
-      {/* Category Filter */}
-      <div className="mb-6">
-        <h2 className="text-lg font-semibold mb-4">Category</h2>
-        {!isLoading ? (
-          <RadioGroup className="space-y-2">
-            {categories?.map((category) => (
-              <div key={category._id} className="flex items-center space-x-2">
-                <RadioGroupItem
-                  onClick={() => handleSearchQuery("category", category.name)}
-                  value={category.name}
-                  id={category._id}
-                />
-                <Label
-                  htmlFor={category._id}
-                  className="text-gray-500 font-light"
-                >
-                  {category.name}
-                </Label>
-              </div>
-            ))}
-          </RadioGroup>
-        ) : (
-          <p>Loading categories...</p>
-        )}
-      </div>
-
-      {/* Division Filter */}
-      <div className="mb-6">
-        <h2 className="text-lg font-semibold mb-4">Division</h2>
-        {!isLoading ? (
+      {/* Show loading state */}
+      {loading ? (
+        <p className="text-gray-500">Loading filters...</p>
+      ) : (
+        <>
+          {/* Category Filter (Dynamic) */}
           <select
-            onChange={(e) => {
-              setSelectedDivision(e.target.value);
-              handleSearchQuery("division", e.target.value);
-            }}
-            className="w-full p-2 border border-gray-300 rounded-md"
+            name="category"
+            value={filters.category}
+            onChange={handleChange}
+            className="w-full mb-3 p-2 border rounded"
           >
-            <option value="">Select Division</option>
-            {divisions?.map((division) => (
-              <option key={division._id} value={division.name}>
-                {division.name}
+            <option value="">All Categories</option>
+            {filterOptions.categories.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
               </option>
             ))}
           </select>
-        ) : (
-          <p>Loading divisions...</p>
-        )}
-      </div>
 
-      {/* District Filter */}
-      {selectedDivision && (
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold mb-4">District</h2>
+          {/* Rent Amount Filter */}
+          <input
+            type="number"
+            name="rentalAmount"
+            value={filters.rentalAmount}
+            onChange={handleChange}
+            placeholder="Max Rent Amount"
+            className="w-full mb-3 p-2 border rounded"
+          />
+
+          {/* Division Filter (Dynamic) */}
           <select
-            onChange={(e) => handleSearchQuery("district", e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-md"
+            name="division"
+            value={filters.division}
+            onChange={handleChange}
+            className="w-full mb-3 p-2 border rounded"
           >
-            <option value="">Select District</option>
-            {districts?.map((district) => (
-              <option key={district} value={district}>
-                {district}
+            <option value="">All Divisions</option>
+            {filterOptions.divisions.map((div) => (
+              <option key={div} value={div}>
+                {div}
               </option>
             ))}
           </select>
-        </div>
+
+          {/* District Filter (Depends on Selected Division) */}
+          <select
+            name="district"
+            value={filters.district}
+            onChange={handleChange}
+            className="w-full mb-3 p-2 border rounded"
+            disabled={!filters.division} // Disable until a division is selected
+          >
+            <option value="">All Districts</option>
+            {filters.division &&
+            filterOptions.districts[filters.division]?.length > 0 ? (
+              filterOptions.districts[filters.division].map((dist) => (
+                <option key={dist} value={dist}>
+                  {dist}
+                </option>
+              ))
+            ) : (
+              <option disabled>No Districts Available</option>
+            )}
+          </select>
+
+          {/* Bedrooms Filter */}
+          <input
+            type="number"
+            name="bedrooms"
+            value={filters.bedrooms}
+            onChange={handleChange}
+            placeholder="Min Bedrooms"
+            className="w-full mb-3 p-2 border rounded"
+          />
+
+          {/* Apply Filters Button */}
+          <button
+            onClick={applyFilters}
+            className="w-full bg-blue-600 text-white py-2 rounded"
+          >
+            Apply Filters
+          </button>
+        </>
       )}
-
-      {/* Rating Filter */}
-      <div className="mb-6">
-        <h2 className="text-lg font-semibold mb-4">Rating</h2>
-        <RadioGroup className="space-y-3">
-          {[5, 4, 3, 2, 1].map((rating) => (
-            <div key={rating} className="flex items-center space-x-2">
-              <RadioGroupItem
-                onClick={() => handleSearchQuery("rating", rating)}
-                value={`${rating}`}
-                id={`rating-${rating}`}
-              />
-              <Label htmlFor={`rating-${rating}`} className="flex items-center">
-                {Array.from({ length: 5 }, (_, i) => (
-                  <Star
-                    size={18}
-                    key={i}
-                    fill={i < rating ? "orange" : "lightgray"}
-                    stroke={i < rating ? "orange" : "lightgray"}
-                  />
-                ))}
-              </Label>
-            </div>
-          ))}
-        </RadioGroup>
-      </div>
     </div>
   );
-}
+};
+
+export default FilterSidebar;

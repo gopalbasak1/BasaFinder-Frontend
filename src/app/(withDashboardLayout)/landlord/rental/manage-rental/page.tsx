@@ -7,8 +7,8 @@ const RentalPage = async ({
   searchParams: Promise<{ page: string }>;
 }) => {
   const { page } = await searchParams;
-  const { data, meta } = await getAllRentals(page, "3");
-  console.log(data);
+  const { data, meta } = await getAllRentals(page);
+  //console.log(data, meta);
   return (
     <div>
       <ManageRental rentals={data} meta={meta} />

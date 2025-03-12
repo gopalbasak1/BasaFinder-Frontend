@@ -31,7 +31,7 @@ const Profile = () => {
   console.log(user);
 
   return (
-    <div className="p-6 max-w-3xl mx-auto bg-white shadow-lg rounded-lg">
+    <div className="p-6 max-w-3xl mx-auto  shadow-2xl rounded-lg">
       <h1 className="text-2xl font-semibold mb-6 text-center">User Profile</h1>
       <div className="flex justify-between items-start">
         <div className="flex items-center space-x-6 mb-6">

@@ -64,6 +64,34 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 },
               ],
             },
+            {
+              title: "Payment",
+              url: `/landlord/payment`,
+              icon: Bot,
+              items: [
+                {
+                  title: "Payment",
+                  url: `/landlord/payment`,
+                },
+              ],
+            },
+          ]
+        : []),
+
+      // Conditionally include the Rental section based on the user's role
+      ...(user?.role === "tenant"
+        ? [
+            {
+              title: "Rental-Request",
+              url: `/tenant/request/request-status`,
+              icon: Bot,
+              items: [
+                {
+                  title: "Request Status",
+                  url: `/tenant/request/request-status`,
+                },
+              ],
+            },
           ]
         : []),
       // Conditionally include the Rental section based on the user's role
@@ -116,7 +144,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   };
 
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar
+      collapsible="icon"
+      {...props}
+      className="bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white transition-colors"
+    >
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>

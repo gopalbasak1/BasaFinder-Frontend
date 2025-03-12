@@ -24,6 +24,7 @@ const ManageRental = ({
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
   const [isModalOpen, setModalOpen] = useState(false);
+
   const handleView = (rental: RentalFormData) => {
     console.log("Viewing rental:", rental);
   };
@@ -55,7 +56,10 @@ const ManageRental = ({
     {
       id: "sl",
       header: "Sl No.",
-      cell: ({ row }) => <span>{row.index + 1}</span>, // Serial Number
+      cell: ({ row }) => {
+        const serialNumber = (meta.page - 1) * meta.limit + row.index + 1;
+        return <span>{serialNumber}</span>;
+      }, // Serial Number
     },
 
     {
@@ -89,6 +93,11 @@ const ManageRental = ({
       accessorKey: "holding",
       header: "Holding ID",
       cell: ({ row }) => <span>{row.original.holding}</span>,
+    },
+    {
+      accessorKey: "unitNumber",
+      header: "Unit Number",
+      cell: ({ row }) => <span>{row.original.unitNumber}</span>,
     },
     {
       accessorKey: "category",

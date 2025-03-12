@@ -2,7 +2,6 @@
 import { getValidToken } from "@/lib/verifyToken";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
-import { FieldValues } from "react-hook-form";
 
 export const getAllRentals = async (
   page?: string,
@@ -16,13 +15,13 @@ export const getAllRentals = async (
     params.append("maxAmount", query?.rentalAmount.toString());
   }
 
-  if (query?.category) {
-    params.append("category", query?.category.toString());
-  }
-
-  // if (query?.category) {
-  //   params.append("category", query?.category.toString());
-  // }
+  if (query?.category) params.append("category", query.category.toString());
+  if (query?.holding) params.append("holding", query.holding.toString());
+  if (query?.district) params.append("district", query.district.toString());
+  if (query?.division) params.append("division", query.division.toString());
+  if (query?.bedrooms) params.append("bedrooms", query.bedrooms.toString());
+  if (query?.rentAmount)
+    params.append("rentAmount", query.rentAmount.toString());
 
   const accessToken = (await cookies()).get("accessToken")?.value || "";
 
@@ -48,6 +47,7 @@ export const getAllRentals = async (
     return Error(error.message);
   }
 };
+
 export const getAllRentalsByAdmin = async (
   page?: string,
   limit?: string,
@@ -109,9 +109,11 @@ export const getAllRentalListing = async (
     params.append("category", query?.category.toString());
   }
 
-  // if (query?.category) {
-  //   params.append("category", query?.category.toString());
-  // }
+  if (query?.category) params.append("category", query.category.toString());
+  if (query?.holding) params.append("holding", query.holding.toString());
+  if (query?.district) params.append("district", query.district.toString());
+  if (query?.division) params.append("division", query.division.toString());
+  if (query?.bedrooms) params.append("bedrooms", query.bedrooms.toString());
 
   try {
     const res = await fetch(

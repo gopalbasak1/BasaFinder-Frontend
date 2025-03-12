@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
-import { Heart, ShoppingBag, LogOut, Sun, Moon, Menu } from "lucide-react";
+import { Heart, ShoppingBag, LogOut, Sun, Moon, Menu, X } from "lucide-react";
 import logo from "../../assests/Basa.svg";
 import { Button } from "../ui/button";
 import {
@@ -27,6 +27,7 @@ export default function Navbar() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => setMounted(true), []);
 
@@ -40,22 +41,22 @@ export default function Navbar() {
 
   return (
     <header className="border-b w-full bg-white dark:bg-gray-900 transition-colors duration-300">
-      <div className="container flex justify-between items-center mx-auto h-[70px] px-3 py-2">
+      <div className="container flex justify-between items-center mx-auto h-[70px] px-4 md:px-6 py-2">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <Image
-            className="h-[70px] rounded-b-full border-4"
+            className="h-[60px] md:h-[70px] rounded-b-full border-4"
             src={logo}
             alt="Basa Finder"
-            width={100}
-            height={100}
+            width={80}
+            height={80}
           />
-          <span className="text-2xl font-black dark:text-white">
+          <span className="text-xl md:text-2xl font-black dark:text-white">
             Basa Finder
           </span>
         </Link>
 
-        {/* Navigation Links */}
+        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
           <Link
             href="/"
@@ -63,33 +64,30 @@ export default function Navbar() {
           >
             Home
           </Link>
-          <Link
-            href="/about"
-            className="text-gray-700 dark:text-white hover:text-violet-600 transition"
-          >
-            About Us
-          </Link>
+
           <Link
             href="/all-listings"
             className="text-gray-700 dark:text-white hover:text-violet-600 transition"
           >
             All Listings
           </Link>
-          {user && (
-            <Link
-              href={`/${user?.role}/dashboard`}
-              className="text-gray-700 dark:text-white hover:text-violet-600 transition"
-            >
-              Dashboard
-            </Link>
-          )}
+
+          <Link
+            href="/about"
+            className="text-gray-700 dark:text-white hover:text-violet-600 transition"
+          >
+            About Us
+          </Link>
         </nav>
 
         {/* Right-side Actions */}
         <div className="flex items-center gap-2">
+          {/* Wishlist */}
           <Button variant="outline" className="rounded-full p-0 size-10">
             <Heart className="text-gray-700 dark:text-white" />
           </Button>
+
+          {/* Shopping Bag */}
           <Button variant="outline" className="rounded-full p-0 size-10">
             <ShoppingBag className="text-gray-700 dark:text-white" />
           </Button>
@@ -145,11 +143,54 @@ export default function Navbar() {
           )}
 
           {/* Mobile Menu Button */}
-          <Button variant="ghost" className="md:hidden">
-            <Menu className="w-6 h-6 text-gray-700 dark:text-white" />
+          <Button
+            variant="ghost"
+            className="md:hidden"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? (
+              <X className="w-6 h-6 text-gray-700 dark:text-white" />
+            ) : (
+              <Menu className="w-6 h-6 text-gray-700 dark:text-white" />
+            )}
           </Button>
         </div>
       </div>
+
+      {/* Mobile Menu Dropdown */}
+      {mobileMenuOpen && (
+        <nav className="md:hidden bg-white dark:bg-gray-900 border-t border-gray-300 dark:border-gray-700 p-4">
+          <ul className="flex flex-col space-y-4 text-gray-700 dark:text-white text-center">
+            <li>
+              <Link
+                href="/"
+                className="hover:text-violet-600 transition"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/all-listings"
+                className="hover:text-violet-600 transition"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                All Listings
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/about"
+                className="hover:text-violet-600 transition"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                About Us
+              </Link>
+            </li>
+          </ul>
+        </nav>
+      )}
     </header>
   );
 }

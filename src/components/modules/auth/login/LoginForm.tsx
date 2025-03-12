@@ -20,13 +20,14 @@ import * as z from "zod";
 import { loginUser, reCaptchaTokenVerification } from "@/services/AuthService";
 import { loginSchema } from "./loginValidation";
 import { useState } from "react";
+import { useUser } from "@/context/UserContext";
 
 const LoginForm = () => {
   const form = useForm({
     resolver: zodResolver(loginSchema),
   });
   const [reCaptchaStatus, setRecaptchaStatus] = useState(false);
-
+  const { setUser } = useUser();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -61,6 +62,11 @@ const LoginForm = () => {
       if (res.success) {
         toast.success(res?.message);
         const userRole = res?.data?.role;
+        // ✅ Update UserContext with logged-in user
+        setUser(res.data);
+
+        // ✅ Force a re-render after updating the user
+        router.refresh();
         if (redirect) {
           router.push(redirect);
         } else if (userRole) {

@@ -196,9 +196,6 @@ const ManageUsersByAdmin = ({
     <div>
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold">Manage Users</h1>
-        <Button onClick={() => router.push("/admin/users/add")} size="sm">
-          Add User <Plus className="w-4 h-4 ml-1" />
-        </Button>
       </div>
 
       <BFTable columns={columns} data={users || []} />
