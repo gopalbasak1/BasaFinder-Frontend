@@ -15,7 +15,7 @@ const RentalDetailsComponentsPage = ({
     rental?.imageUrls?.[0] || ""
   );
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
-
+  console.log(rental);
   return (
     <div className="max-w-5xl mx-auto p-5 bg-white shadow-md rounded-md">
       {/* Image Gallery & Rental Info */}
@@ -60,7 +60,8 @@ const RentalDetailsComponentsPage = ({
           <div className="flex items-center gap-2 text-gray-600 mt-2">
             <MapPin className="w-5 h-5 text-violet-500" />
             <span>
-              {rental?.citycorporation}, {rental?.district}, {rental?.division}
+              {rental?.citycorporation}, {rental?.district}, {rental?.division},{" "}
+              {rental?.postalCode}
             </span>
           </div>
 
@@ -88,12 +89,12 @@ const RentalDetailsComponentsPage = ({
           </div>
 
           {/* Ratings */}
-          <div className="mt-4 flex items-center gap-2 text-gray-600">
+          {/* <div className="mt-4 flex items-center gap-2 text-gray-600">
             <Star className="w-5 h-5 text-orange-400" />
             <span>
               {rental?.averageRating} Ratings ({rental?.ratingCount} Reviews)
             </span>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -112,9 +113,11 @@ const RentalDetailsComponentsPage = ({
 
           <p>
             <strong>Available From:</strong>{" "}
-            {rental?.availableFrom
-              ? new Date(rental?.availableFrom).toDateString()
-              : "N/A"}
+            <span className="font-medium text-yellow-800">
+              {rental?.availableFrom
+                ? new Date(rental?.availableFrom).toDateString()
+                : "N/A"}
+            </span>
           </p>
           <p>
             <strong>Category:</strong> {rental?.category}
@@ -124,9 +127,13 @@ const RentalDetailsComponentsPage = ({
 
       {/* Actions */}
       <div className="mt-6 flex gap-4">
-        <Button className="w-1/2" onClick={() => setIsRequestModalOpen(true)}>
-          Request Rental
-        </Button>
+        {rental?.isAvailable ? (
+          <Button className="w-1/2" onClick={() => setIsRequestModalOpen(true)}>
+            Request Rental
+          </Button>
+        ) : (
+          <Button className="bg-red-500 font-semibold w-1/2">Booked</Button>
+        )}
       </div>
 
       {/* Rental Request Modal */}

@@ -77,7 +77,7 @@ export default function Verify() {
 
     fetchData();
   }, [orderId]);
-  console.log(orderData);
+  console.log("verify", orderData);
   return loading ? (
     <Skeleton />
   ) : orderData ? (

@@ -4,24 +4,32 @@ import { useEffect, useState } from "react";
 import { getMe } from "@/services/User";
 import Image from "next/image";
 import EditProfileModal from "@/components/ui/core/BFModel/EditProfileModal";
+import { useRouter } from "next/navigation";
 
 const Profile = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const router = useRouter();
+  const fetchUser = async () => {
+    setLoading(true);
 
-  useEffect(() => {
-    const fetchUser = async () => {
+    try {
       const response = await getMe();
       if (response?.success) {
         setUser(response.data);
       } else {
         setError(response?.message || "Failed to load user data");
       }
+    } catch (err) {
+      setError("Something went wrong");
+    } finally {
       setLoading(false);
-    };
+    }
+  };
 
+  useEffect(() => {
     fetchUser();
   }, []);
 

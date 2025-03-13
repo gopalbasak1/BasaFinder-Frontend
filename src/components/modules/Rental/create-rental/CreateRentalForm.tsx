@@ -293,9 +293,23 @@ const CreateRentalForm = () => {
                 <FormItem>
                   <FormLabel>Upazila</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value || ""} />
+                    <Input
+                      {...field}
+                      value={field.value || ""}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        if (e.target.value) {
+                          form.setValue("citycorporation", ""); // Clear City Corporation
+                        }
+                      }}
+                      disabled={!!form.watch("citycorporation")}
+                    />
                   </FormControl>
-                  <FormMessage />
+                  {!form.watch("upazila") && !form.watch("citycorporation") && (
+                    <FormMessage>
+                      Either Upazila or City Corporation must be filled
+                    </FormMessage>
+                  )}
                 </FormItem>
               )}
             />
@@ -319,9 +333,23 @@ const CreateRentalForm = () => {
                 <FormItem>
                   <FormLabel>City Corporation</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value || ""} />
+                    <Input
+                      {...field}
+                      value={field.value || ""}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        if (e.target.value) {
+                          form.setValue("upazila", ""); // Clear Upazila
+                        }
+                      }}
+                      disabled={!!form.watch("upazila")}
+                    />
                   </FormControl>
-                  <FormMessage />
+                  {!form.watch("upazila") && !form.watch("citycorporation") && (
+                    <FormMessage>
+                      Either Upazila or City Corporation must be filled
+                    </FormMessage>
+                  )}
                 </FormItem>
               )}
             />

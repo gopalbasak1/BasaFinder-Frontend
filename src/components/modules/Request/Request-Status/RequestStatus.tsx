@@ -61,7 +61,7 @@ const RequestStatus = ({ requests, meta }: RequestStatusProps) => {
       if (response.success) {
         toast.success("Payment successful!");
         if (response?.data) {
-          //   console.log(response.data);
+          console.log("frontend", response.data);
           setTimeout(() => {
             window.location.href = response?.data;
           }, 1000);

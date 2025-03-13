@@ -70,7 +70,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
       if (response?.success) {
         toast.success(response.message);
-
+        window.location.reload();
         const emailChanged = user.email !== formData.email;
         const phoneChanged = user.phoneNumber !== formData.phoneNumber;
 

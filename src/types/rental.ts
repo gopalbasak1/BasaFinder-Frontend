@@ -9,6 +9,7 @@ export type RentalFormData = {
   bedrooms: number;
   rentAmount: number;
   district: string;
+  isAvailable: boolean;
   upazila: string;
   postalCode: 0;
   citycorporation: string;

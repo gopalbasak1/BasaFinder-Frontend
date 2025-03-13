@@ -66,6 +66,9 @@ const RegisterForm = () => {
         // ✅ Update UserContext with logged-in user
         setUser(res.data);
         router.refresh();
+        // ✅ Force a full page reload to ensure navbar updates
+
+        // window.location.reload();
 
         router.push("/login");
       } else {
@@ -219,7 +222,7 @@ const RegisterForm = () => {
       </Form>
       <p className="text-sm text-gray-600 text-center my-3">
         Already have an account ?
-        <Link href="/login" className="text-primary">
+        <Link href="/login" className="text-primary font-medium pl-1">
           Login
         </Link>
       </p>

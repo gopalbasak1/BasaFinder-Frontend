@@ -67,6 +67,10 @@ const LoginForm = () => {
 
         // ✅ Force a re-render after updating the user
         router.refresh();
+        // ✅ Force a full page reload to ensure navbar updates
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
         if (redirect) {
           router.push(redirect);
         } else if (userRole) {
@@ -136,7 +140,7 @@ const LoginForm = () => {
 
       <p className="text-sm text-gray-600 text-center my-3">
         Don't have an account?{" "}
-        <Link href="/register" className="text-primary">
+        <Link href="/register" className="text-primary font-medium">
           Register
         </Link>
       </p>
